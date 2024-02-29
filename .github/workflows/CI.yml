@@ -88,6 +88,9 @@ jobs:
           node-version: 20
           cache: yarn
           architecture: x86
+      - name: sanity check
+        run: make
+        working-directory: ./hashtree
       - name: Build in docker
         uses: addnab/docker-run-action@v3
         if: ${{ matrix.settings.docker }}
