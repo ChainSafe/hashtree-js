@@ -1,6 +1,16 @@
 {
   "name": "@chainsafe/hashtree",
   "version": "0.0.0",
+  "scripts": {
+    "artifacts": "napi artifacts",
+    "clean": "rm -rf ./target ./hashtree/rust_bindings/target",
+    "build": "napi build --platform --release",
+    "build:debug": "napi build --platform",
+    "prepublishOnly": "napi prepublish -t npm",
+    "test": "ava",
+    "universal": "napi universal",
+    "version": "napi version"
+  },
   "main": "index.js",
   "types": "index.d.ts",
   "napi": {
@@ -25,14 +35,5 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/ChainSafe/hashtree-js.git"
-  },
-  "scripts": {
-    "artifacts": "napi artifacts",
-    "build": "napi build --platform --release",
-    "build:debug": "napi build --platform",
-    "prepublishOnly": "napi prepublish -t npm",
-    "test": "ava",
-    "universal": "napi universal",
-    "version": "napi version"
   }
 }
