@@ -39,30 +39,40 @@ jobs:
           - arch: Mac x86
             runner: macost-13
             target: x86_64-apple-darwin
+            make_command: make
           - arch: Mac arm64
             runner: macos-latest
             target: aarch64-apple-darwin
+            make_command: make
 
           - arch: Linux GNU x86
             runner: ubuntu-latest
             target: x86_64-unknown-linux-gnu
+            make_command: make
           - arch: Linux GNU arm64
             runner: ubuntu-latest
             target: aarch64-unknown-linux-gnu
+            requires_zig: true
+            make_command: make
 
           - arch: Linux MUSL x86
             runner: ubuntu-latest
             target: x86_64-unknown-linux-musl
+            make_command: make
           - arch: Linux MUSL arm64
             runner: ubuntu-latest
             target: aarch64-unknown-linux-musl
+            requires_zig: true
+            make_command: make
 
           - arch: Windows x86
             runner: windows-latest
             target: x86_64-pc-windows-msvc
+            make_command: CC=gcc make
           - arch: Windows arm64
             runner: windows-latest
             target: aarch64-pc-windows-msvc
+            make_command: CC=gcc make
           
     steps:
       - name: Checkout Repo
@@ -92,6 +102,8 @@ jobs:
       - name: Install Dependencies
         shell: bash
         run: yarn
+      - uses: goto-bus-stop/setup-zig@v2
+        if: ${{ matrix.settings.requires_zig }}
       - name: Sanity Check
         shell: bash
         working-directory: hashtree/src
