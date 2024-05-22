@@ -94,7 +94,7 @@ jobs:
         run: yarn
       - name: Build
         shell: bash
-        run: yarn build
+        run: yarn build --target ${{ matrix.settings.target }}
       - name: Test
         run: yarn test
       - name: Upload Artifact
