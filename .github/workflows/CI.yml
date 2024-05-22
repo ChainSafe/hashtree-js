@@ -37,7 +37,7 @@ jobs:
           # https://napi.rs/docs/cli/artifacts
           # https://github.com/actions/runner-images
           - arch: Mac x86
-            runner: macost-13
+            runner: macost-12
             target: x86_64-apple-darwin
             make_command: make
           - arch: Mac arm64
@@ -55,10 +55,13 @@ jobs:
           #   requires_zig: true
           #   make_command: make
 
-          - arch: Linux MUSL x86
-            runner: ubuntu-latest
-            target: x86_64-unknown-linux-musl
-            make_command: make
+          # Cross-compiling works but need to figure out musl env to run tests
+          # the index.js looks for musl env and selects correct binary
+          # - arch: Linux MUSL x86
+          #   runner: ubuntu-latest
+          #   target: x86_64-unknown-linux-musl
+          #   make_command: make
+          # Node does not support aarch64-linux-musl
           # - arch: Linux MUSL arm64
           #   runner: ubuntu-latest
           #   target: aarch64-unknown-linux-musl
