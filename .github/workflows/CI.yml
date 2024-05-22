@@ -12,27 +12,27 @@ on:
       - main
     tags-ignore:
       - '**'
-    paths-ignore:
-      - '**/*.md'
-      - LICENSE
-      - '**/*.gitignore'
-      - .editorconfig
-      - docs/**
+    # paths-ignore:
+    #   - '**/*.md'
+    #   - LICENSE
+    #   - '**/*.gitignore'
+    #   - .editorconfig
+    #   - docs/**
   pull_request: null
 
 jobs:
-  build-mac:
+  build:
     name: node@v${{ matrix.node-version }} on ${{ matrix.settings.arch }} archtitecture
     runs-on: ${{ matrix.settings.runner }}
     strategy:
       fail-fast: false
       matrix:
         node-version:
-          - 18
-          - 19
+          # - 18
+          # - 19
           - 20
-          - 21
-          - 22
+          # - 21
+          # - 22
         settings:
           # https://napi.rs/docs/cli/artifacts
           # https://github.com/actions/runner-images
@@ -65,6 +65,10 @@ jobs:
             target: aarch64-pc-windows-msvc
           
     steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
       - name: Setup Rust Toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
@@ -85,10 +89,6 @@ jobs:
         with:
           node-version: 20
           cache: yarn
-      - name: Checkout Repo
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
       - name: Install Dependencies
         shell: bash
         run: yarn
