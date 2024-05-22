@@ -94,8 +94,8 @@ jobs:
         run: yarn
       - name: Sanity Check
         shell: bash
-        working-directory: hashtree/rust_bindings
-        run: cargo build --release --manifest-path ./Cargo.toml --target ${{ matrix.settings.target }} --verbose
+        working-directory: hashtree/src
+        run: make
       - name: Build
         shell: bash
         run: yarn build --target ${{ matrix.settings.target }}
