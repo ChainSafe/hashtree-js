@@ -28,10 +28,12 @@ jobs:
         settings:
           # https://napi.rs/docs/cli/artifacts
           # https://github.com/actions/runner-images
-          - arch: Mac x86
-            runner: macos-13
-            target: x86_64-apple-darwin
-            make_command: make
+
+          # OSX x86 is not supported by the assembly yet.  @potuz is aware
+          # - arch: Mac x86
+          #   runner: macos-13
+          #   target: x86_64-apple-darwin
+          #   make_command: make
           - arch: Mac arm64
             runner: macos-latest
             target: aarch64-apple-darwin
