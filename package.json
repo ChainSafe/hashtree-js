@@ -1,6 +1,11 @@
 {
   "name": "@chainsafe/hashtree",
   "version": "0.0.0",
+  "author": "ChainSafe.io",
+  "contributors": [
+    "Cayman Navan <>",
+    "Matthew Keil <me@matthewkeil.com>"
+  ],
   "scripts": {
     "artifacts": "napi artifacts",
     "clean": "rm -rf ./target ./hashtree/rust_bindings/target",
