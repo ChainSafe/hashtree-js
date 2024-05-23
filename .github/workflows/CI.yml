@@ -43,11 +43,11 @@ jobs:
             runner: ubuntu-latest
             target: x86_64-unknown-linux-gnu
             make_command: make
-          # - arch: Linux GNU arm64
-          #   runner: ubuntu-latest
-          #   target: aarch64-unknown-linux-gnu
-          #   requires_zig: true
-          #   make_command: make
+          - arch: Linux GNU arm64
+            runner: ubuntu-latest
+            target: aarch64-unknown-linux-gnu
+            requires_zig: true
+            make_command: make
 
           # Cross-compiling works but need to figure out musl env to run tests
           #
