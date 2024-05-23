@@ -110,8 +110,8 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.settings.runner }}-bindings-${{ matrix.settings.target }}
-          path: ${{ env.APP_NAME }}.*.node
+          name: ${{ matrix.settings.target }}-bindings-node-${{ matrix.node-version }}
+          path: '*.node'
           if-no-files-found: error
 
   publish:
