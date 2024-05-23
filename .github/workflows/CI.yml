@@ -29,7 +29,7 @@ jobs:
           # https://napi.rs/docs/cli/artifacts
           # https://github.com/actions/runner-images
           - arch: Mac x86
-            runner: macost-12
+            runner: macos-13
             target: x86_64-apple-darwin
             make_command: make
           - arch: Mac arm64
