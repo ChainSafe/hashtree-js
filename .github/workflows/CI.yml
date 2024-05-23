@@ -48,6 +48,7 @@ jobs:
           #   make_command: make
 
           # Cross-compiling works but need to figure out musl env to run tests
+          #
           # the index.js looks for musl env and selects correct binary
           # - arch: Linux MUSL x86
           #   runner: ubuntu-latest
@@ -60,6 +61,9 @@ jobs:
           #   requires_zig: true
           #   make_command: make
 
+          # C lib builds but the rust wrapper does not link correctly. Working on PR
+          # for prysmaticlabs/hashtree
+          #
           # - arch: Windows x86
           #   runner: windows-latest
           #   target: x86_64-pc-windows-msvc
