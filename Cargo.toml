@@ -7,7 +7,7 @@ edition = "2021"
 crate-type = ["cdylib"]
 
 [dependencies]
-hashtree-rs = { path = "hashtree/rust_bindings" }
+hashtree-rs = { path = "hashtree" }
 napi = { version = "2.16.6", default-features = false, features = [
     # supports node v12.22.0+, v14.17.0+, v15.12.0+, 16.0.0 and all later versions
     "napi8"

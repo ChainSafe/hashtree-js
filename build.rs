@@ -5,7 +5,7 @@ use std::process::Command;
 
 fn main() {
   // Define the path to the hashtree bindings directory
-  let hashtree_bindings_dir = PathBuf::from("hashtree/rust_bindings");
+  let hashtree_bindings_dir = PathBuf::from("hashtree");
 
   // Run the build script of the hashtree library
   let status = Command::new("cargo")
