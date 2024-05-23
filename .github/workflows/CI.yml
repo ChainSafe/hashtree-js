@@ -3,7 +3,6 @@ env:
   DEBUG: napi:*
   APP_NAME: hashtree
   MACOSX_DEPLOYMENT_TARGET: '10.13'
-  INPUT_RUN: 1024
 permissions:
   contents: write
   id-token: write
@@ -31,7 +30,7 @@ jobs:
             runner: ubuntu-latest
             architecture: arm64
             target: aarch64-unknown-linux-gnu
-            docker_image: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian-aarch64
+            docker_image: "'ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian-aarch64'"
             make_command: CC=gcc make
     
     steps:
