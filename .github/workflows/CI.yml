@@ -166,7 +166,8 @@ jobs:
         run: ${{ matrix.settings.make_command }}
       - name: Echo Artifacts
         working-directory: hashtree/build
-        run: dir /S
+        run: Get-ChildItem -Recurse
+        shell: pwsh
       - name: Build
         shell: bash
         run: yarn build --target ${{ matrix.settings.target }}
