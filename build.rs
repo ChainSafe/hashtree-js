@@ -24,4 +24,6 @@ fn main() {
 
   // setup napi
   napi_build::setup();
+
+  println!("cargo:rerun-if-changed=build.rs");
 }
