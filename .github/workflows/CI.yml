@@ -3,6 +3,7 @@ env:
   DEBUG: napi:*
   APP_NAME: hashtree
   MACOSX_DEPLOYMENT_TARGET: '10.13'
+  INPUT_RUN: 1024
 permissions:
   contents: write
   id-token: write
@@ -30,7 +31,7 @@ jobs:
             runner: ubuntu-latest
             architecture: arm64
             target: aarch64-unknown-linux-gnu
-            docker_image: "'ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian-aarch64'"
+            docker_image: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian-aarch64
             make_command: CC=gcc make
     
     steps:
@@ -52,133 +53,133 @@ jobs:
         uses: docker/setup-qemu-action@v3
         with:
           platforms: ${{ matrix.settings.architecture }}
-      - name: Sanity Check
-        uses: addnab/docker-run-action@v3
-        with:
-          image: ${{ matrix.settings.docker }}
-          options: '--user 0:0 -v ${{ github.workspace }}/.cargo-cache/git/db:/usr/local/cargo/git/db -v ${{ github.workspace }}/.cargo/registry/cache:/usr/local/cargo/registry/cache -v ${{ github.workspace }}/.cargo/registry/index:/usr/local/cargo/registry/index -v ${{ github.workspace }}:/build -w /build/hashtree/src'
-          run: ${{ matrix.settings.make }}
-      - name: Install dependencies
-        shell: bash
+      - name: Build Binding, Run Tests and Copy Build Artifact to Host
         run: |
-          yarn config set supportedArchitectures.cpu "${{ matrix.settings.architecture }}"
-          yarn config set supportedArchitectures.libc "glibc"
-          yarn install
-      - name: Build in docker
-        uses: addnab/docker-run-action@v3
+          docker buildx build \
+            --load \
+            --platform linux/arm64 \
+            --build-arg NODE_VERSION=${{ matrix.node-version }} \
+            -v ${{ github.workspace }}/.cargo-cache/git/db:/usr/local/cargo/git/db \
+            -v ${{ github.workspace }}/.cargo/registry/cache:/usr/local/cargo/cache \
+            -v ${{ github.workspace }}/.cargo/registry/index:/usr/local/cargo/registry/index \
+            -t hashtree-temp-${{ matrix.settings.architecture }}:${{ matrix.node-version }} \
+            --progress=plain .
+          docker create \
+            --name temp-container \
+            hashtree-temp-${{ matrix.settings.architecture }}:${{ matrix.node-version }}
+          docker cp temp-container:/usr/src/hashtree-js/prebuild ./prebuild
+      - name: Upload binding.node
+        if: github.repository_owner == 'chainsafe' && github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v4
         with:
-          image: ${{ matrix.settings.docker }}
-          options: '--user 0:0 -v ${{ github.workspace }}/.cargo-cache/git/db:/usr/local/cargo/git/db -v ${{ github.workspace }}/.cargo/registry/cache:/usr/local/cargo/registry/cache -v ${{ github.workspace }}/.cargo/registry/index:/usr/local/cargo/registry/index -v ${{ github.workspace }}:/build -w /build'
-          run: yarn build --target ${{ matrix.settings.target }}
-      - name: Setup and run tests
-        uses: addnab/docker-run-action@v3
+          name: binding-${{ matrix.settings.architecture }}-${{ matrix.node-version }}
+          path: prebuild/*.node
+          if-no-files-found: error
+
+  build:
+    name: node@v${{ matrix.node-version }} on ${{ matrix.settings.arch }} archtitecture
+    runs-on: ${{ matrix.settings.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version:
+          # - 18
+          # - 19
+          - 20
+          # - 21
+          # - 22
+        settings:
+          # https://napi.rs/docs/cli/artifacts
+          # https://github.com/actions/runner-images
+
+          # OSX x86 is not supported by the assembly yet.  @potuz is aware
+          # - arch: Mac x86
+          #   runner: macos-13
+          #   target: x86_64-apple-darwin
+          #   make_command: make
+          - arch: Mac arm64
+            runner: macos-latest
+            target: aarch64-apple-darwin
+            make_command: make
+
+          - arch: Linux GNU x86
+            runner: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            make_command: make
+
+          # Cross-compiling works but need to figure out musl env to run tests
+          #
+          # the index.js looks for musl env and selects correct binary
+          # - arch: Linux MUSL x86
+          #   runner: ubuntu-latest
+          #   target: x86_64-unknown-linux-musl
+          #   make_command: make
+          # Node does not support aarch64-linux-musl
+          # - arch: Linux MUSL arm64
+          #   runner: ubuntu-latest
+          #   target: aarch64-unknown-linux-musl
+          #   requires_zig: true
+          #   make_command: make
+
+          # C lib builds but the rust wrapper does not link correctly. Working on PR
+          # for prysmaticlabs/hashtree
+          #
+          - arch: Windows x86
+            runner: windows-latest
+            target: x86_64-pc-windows-msvc
+            make_command: CC=gcc make
+          # - arch: Windows arm64
+          #   runner: windows-latest
+          #   target: aarch64-pc-windows-msvc
+          #   make_command: CC=gcc make
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
         with:
-          image:  ${{ matrix.settings.docker }}
-          options: '--platform linux/arm64 -v ${{ github.workspace }}:/build -w /build'
-          run: yarn test
-      - run: docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-
-  # build:
-  #   name: node@v${{ matrix.node-version }} on ${{ matrix.settings.arch }} archtitecture
-  #   runs-on: ${{ matrix.settings.runner }}
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       node-version:
-  #         - 18
-  #         - 19
-  #         - 20
-  #         - 21
-  #         - 22
-  #       settings:
-  #         # https://napi.rs/docs/cli/artifacts
-  #         # https://github.com/actions/runner-images
-
-  #         # OSX x86 is not supported by the assembly yet.  @potuz is aware
-  #         # - arch: Mac x86
-  #         #   runner: macos-13
-  #         #   target: x86_64-apple-darwin
-  #         #   make_command: make
-  #         - arch: Mac arm64
-  #           runner: macos-latest
-  #           target: aarch64-apple-darwin
-  #           make_command: make
-
-  #         - arch: Linux GNU x86
-  #           runner: ubuntu-latest
-  #           target: x86_64-unknown-linux-gnu
-  #           make_command: make
-
-  #         # Cross-compiling works but need to figure out musl env to run tests
-  #         #
-  #         # the index.js looks for musl env and selects correct binary
-  #         # - arch: Linux MUSL x86
-  #         #   runner: ubuntu-latest
-  #         #   target: x86_64-unknown-linux-musl
-  #         #   make_command: make
-  #         # Node does not support aarch64-linux-musl
-  #         # - arch: Linux MUSL arm64
-  #         #   runner: ubuntu-latest
-  #         #   target: aarch64-unknown-linux-musl
-  #         #   requires_zig: true
-  #         #   make_command: make
-
-  #         # C lib builds but the rust wrapper does not link correctly. Working on PR
-  #         # for prysmaticlabs/hashtree
-  #         #
-  #         # - arch: Windows x86
-  #         #   runner: windows-latest
-  #         #   target: x86_64-pc-windows-msvc
-  #         #   make_command: CC=gcc make
-  #         # - arch: Windows arm64
-  #         #   runner: windows-latest
-  #         #   target: aarch64-pc-windows-msvc
-  #         #   make_command: CC=gcc make
-  #   steps:
-  #     - name: Checkout Repo
-  #       uses: actions/checkout@v4
-  #       with:
-  #         submodules: recursive
-  #     - name: Setup Rust Toolchain
-  #       uses: dtolnay/rust-toolchain@stable
-  #       with:
-  #         toolchain: stable
-  #         targets: ${{ matrix.settings.target }}
-  #     - name: Cache cargo
-  #       uses: actions/cache@v4
-  #       with:
-  #         path: |
-  #           ~/.cargo/registry/index/
-  #           ~/.cargo/registry/cache/
-  #           ~/.cargo/git/db/
-  #           .cargo-cache
-  #           target/
-  #         key: ${{ matrix.settings.host }}-cargo-${{ matrix.settings.target }}
-  #     - name: Setup node
-  #       uses: actions/setup-node@v4
-  #       with:
-  #         node-version: 20
-  #         cache: yarn
-  #     - name: Install Dependencies
-  #       shell: bash
-  #       run: yarn
-  #     - uses: goto-bus-stop/setup-zig@v2
-  #       if: ${{ matrix.settings.requires_zig }}
-  #     - name: Sanity Check
-  #       shell: bash
-  #       working-directory: hashtree/src
-  #       run: ${{ matrix.settings.make_command }}
-  #     - name: Build
-  #       shell: bash
-  #       run: yarn build --target ${{ matrix.settings.target }}
-  #     - name: Test
-  #       run: yarn test
-  #     - name: Upload Artifact
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: ${{ matrix.settings.target }}-bindings-node-${{ matrix.node-version }}
-  #         path: '*.node'
-  #         if-no-files-found: error
+          submodules: recursive
+      - name: Setup Rust Toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+          targets: ${{ matrix.settings.target }}
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            .cargo-cache
+            target/
+          key: ${{ matrix.settings.host }}-cargo-${{ matrix.settings.target }}
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+      - name: Install Dependencies
+        shell: bash
+        run: yarn
+      - uses: goto-bus-stop/setup-zig@v2
+        if: ${{ matrix.settings.requires_zig }}
+      - name: Sanity Check
+        shell: bash
+        working-directory: hashtree/src
+        run: |
+          ${{ matrix.settings.make_command }}
+          ls -A -G -F
+      - name: Build
+        shell: bash
+        run: yarn build --target ${{ matrix.settings.target }}
+      - name: Test
+        run: yarn test
+      - name: Upload binding.node
+        if: github.repository_owner == 'chainsafe' && github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: binding-${{ matrix.settings.architecture }}-${{ matrix.node-version }}
+          path: prebuild/*.node
+          if-no-files-found: error
 
   # publish:
   #   name: Publish
