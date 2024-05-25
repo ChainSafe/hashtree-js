@@ -95,15 +95,15 @@ jobs:
           #   runner: macos-13
           #   target: x86_64-apple-darwin
           #   make_command: make
-          - arch: Mac arm64
-            runner: macos-latest
-            target: aarch64-apple-darwin
-            make_command: make
+          # - arch: Mac arm64
+          #   runner: macos-latest
+          #   target: aarch64-apple-darwin
+          #   make_command: make
 
-          - arch: Linux GNU x86
-            runner: ubuntu-latest
-            target: x86_64-unknown-linux-gnu
-            make_command: make
+          # - arch: Linux GNU x86
+          #   runner: ubuntu-latest
+          #   target: x86_64-unknown-linux-gnu
+          #   make_command: make
 
           # Cross-compiling works but need to figure out musl env to run tests
           #
@@ -165,13 +165,8 @@ jobs:
         working-directory: hashtree/src
         run: ${{ matrix.settings.make_command }}
       - name: Echo Artifacts
-        shell: bash
-        working-directory: hashtree/src/build
-        run: |
-          echo ">>> hashtree/build/lib"
-          ls -A -G -F lib
-          echo ">>> hashtree/build/obj"
-          ls -A -G -F obj
+        working-directory: hashtree\src\build
+        run: dir /S
       - name: Build
         shell: bash
         run: yarn build --target ${{ matrix.settings.target }}
