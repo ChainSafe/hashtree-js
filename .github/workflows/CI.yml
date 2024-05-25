@@ -165,7 +165,7 @@ jobs:
         working-directory: hashtree/src
         run: ${{ matrix.settings.make_command }}
       - name: Echo Artifacts
-        working-directory: hashtree\src\build
+        working-directory: hashtree/build
         run: dir /S
       - name: Build
         shell: bash
