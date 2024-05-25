@@ -6,9 +6,9 @@ ARG WORKSPACE_DIR
 
 COPY . /usr/src/hashtree-js
 
-COPY ${WORKSPACE_DIR}/.cargo-cache/git/db /usr/local/cargo/git/db 
-COPY ${WORKSPACE_DIR}/.cargo/registry/cache /usr/local/cargo/cache 
-COPY ${WORKSPACE_DIR}/.cargo/registry/index /usr/local/cargo/registry/index 
+# COPY ${WORKSPACE_DIR}/.cargo-cache/git/db /usr/local/cargo/git/db 
+# COPY ${WORKSPACE_DIR}/.cargo/registry/cache /usr/local/cargo/cache 
+# COPY ${WORKSPACE_DIR}/.cargo/registry/index /usr/local/cargo/registry/index 
 
 WORKDIR /usr/src/hashtree-js/hashtree/src
 
