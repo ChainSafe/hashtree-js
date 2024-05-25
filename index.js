@@ -32,7 +32,7 @@ switch (platform) {
   case 'android':
     switch (arch) {
       case 'arm64':
-        localFileExisted = existsSync(join(__dirname, 'hashtree.android-arm64.node'))
+        localFileExisted = existsSync(join(__dirname, "prebuild", 'hashtree.android-arm64.node'))
         try {
           if (localFileExisted) {
             nativeBinding = require('./prebuild/hashtree.android-arm64.node')
@@ -44,7 +44,7 @@ switch (platform) {
         }
         break
       case 'arm':
-        localFileExisted = existsSync(join(__dirname, 'hashtree.android-arm-eabi.node'))
+        localFileExisted = existsSync(join(__dirname, "prebuild", 'hashtree.android-arm-eabi.node'))
         try {
           if (localFileExisted) {
             nativeBinding = require('./prebuild/hashtree.android-arm-eabi.node')
@@ -63,7 +63,7 @@ switch (platform) {
     switch (arch) {
       case 'x64':
         localFileExisted = existsSync(
-          join(__dirname, 'hashtree.win32-x64-msvc.node')
+          join(__dirname, "prebuild", 'hashtree.win32-x64-msvc.node')
         )
         try {
           if (localFileExisted) {
@@ -77,7 +77,7 @@ switch (platform) {
         break
       case 'ia32':
         localFileExisted = existsSync(
-          join(__dirname, 'hashtree.win32-ia32-msvc.node')
+          join(__dirname, "prebuild", 'hashtree.win32-ia32-msvc.node')
         )
         try {
           if (localFileExisted) {
@@ -91,7 +91,7 @@ switch (platform) {
         break
       case 'arm64':
         localFileExisted = existsSync(
-          join(__dirname, 'hashtree.win32-arm64-msvc.node')
+          join(__dirname, "prebuild", 'hashtree.win32-arm64-msvc.node')
         )
         try {
           if (localFileExisted) {
@@ -108,7 +108,7 @@ switch (platform) {
     }
     break
   case 'darwin':
-    localFileExisted = existsSync(join(__dirname, 'hashtree.darwin-universal.node'))
+    localFileExisted = existsSync(join(__dirname, "prebuild", 'hashtree.darwin-universal.node'))
     try {
       if (localFileExisted) {
         nativeBinding = require('./prebuild/hashtree.darwin-universal.node')
@@ -119,7 +119,7 @@ switch (platform) {
     } catch {}
     switch (arch) {
       case 'x64':
-        localFileExisted = existsSync(join(__dirname, 'hashtree.darwin-x64.node'))
+        localFileExisted = existsSync(join(__dirname, "prebuild", 'hashtree.darwin-x64.node'))
         try {
           if (localFileExisted) {
             nativeBinding = require('./prebuild/hashtree.darwin-x64.node')
@@ -132,7 +132,7 @@ switch (platform) {
         break
       case 'arm64':
         localFileExisted = existsSync(
-          join(__dirname, 'hashtree.darwin-arm64.node')
+          join(__dirname, "prebuild", 'hashtree.darwin-arm64.node')
         )
         try {
           if (localFileExisted) {
@@ -152,7 +152,7 @@ switch (platform) {
     if (arch !== 'x64') {
       throw new Error(`Unsupported architecture on FreeBSD: ${arch}`)
     }
-    localFileExisted = existsSync(join(__dirname, 'hashtree.freebsd-x64.node'))
+    localFileExisted = existsSync(join(__dirname, "prebuild", 'hashtree.freebsd-x64.node'))
     try {
       if (localFileExisted) {
         nativeBinding = require('./prebuild/hashtree.freebsd-x64.node')
@@ -168,7 +168,7 @@ switch (platform) {
       case 'x64':
         if (isMusl()) {
           localFileExisted = existsSync(
-            join(__dirname, 'hashtree.linux-x64-musl.node')
+            join(__dirname, "prebuild", 'hashtree.linux-x64-musl.node')
           )
           try {
             if (localFileExisted) {
@@ -181,7 +181,7 @@ switch (platform) {
           }
         } else {
           localFileExisted = existsSync(
-            join(__dirname, 'hashtree.linux-x64-gnu.node')
+            join(__dirname, "prebuild", 'hashtree.linux-x64-gnu.node')
           )
           try {
             if (localFileExisted) {
@@ -197,7 +197,7 @@ switch (platform) {
       case 'arm64':
         if (isMusl()) {
           localFileExisted = existsSync(
-            join(__dirname, 'hashtree.linux-arm64-musl.node')
+            join(__dirname, "prebuild", 'hashtree.linux-arm64-musl.node')
           )
           try {
             if (localFileExisted) {
@@ -210,7 +210,7 @@ switch (platform) {
           }
         } else {
           localFileExisted = existsSync(
-            join(__dirname, 'hashtree.linux-arm64-gnu.node')
+            join(__dirname, "prebuild", 'hashtree.linux-arm64-gnu.node')
           )
           try {
             if (localFileExisted) {
@@ -225,7 +225,7 @@ switch (platform) {
         break
       case 'arm':
         localFileExisted = existsSync(
-          join(__dirname, 'hashtree.linux-arm-gnueabihf.node')
+          join(__dirname, "prebuild", 'hashtree.linux-arm-gnueabihf.node')
         )
         try {
           if (localFileExisted) {
@@ -240,7 +240,7 @@ switch (platform) {
       case 'riscv64':
         if (isMusl()) {
           localFileExisted = existsSync(
-            join(__dirname, 'hashtree.linux-riscv64-musl.node')
+            join(__dirname, "prebuild", 'hashtree.linux-riscv64-musl.node')
           )
           try {
             if (localFileExisted) {
@@ -253,7 +253,7 @@ switch (platform) {
           }
         } else {
           localFileExisted = existsSync(
-            join(__dirname, 'hashtree.linux-riscv64-gnu.node')
+            join(__dirname, "prebuild", 'hashtree.linux-riscv64-gnu.node')
           )
           try {
             if (localFileExisted) {
@@ -268,7 +268,7 @@ switch (platform) {
         break
       case 's390x':
         localFileExisted = existsSync(
-          join(__dirname, 'hashtree.linux-s390x-gnu.node')
+          join(__dirname, "prebuild", 'hashtree.linux-s390x-gnu.node')
         )
         try {
           if (localFileExisted) {
