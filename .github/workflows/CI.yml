@@ -59,9 +59,7 @@ jobs:
             --load \
             --platform linux/arm64 \
             --build-arg NODE_VERSION=${{ matrix.node-version }} \
-            -v ${{ github.workspace }}/.cargo-cache/git/db:/usr/local/cargo/git/db \
-            -v ${{ github.workspace }}/.cargo/registry/cache:/usr/local/cargo/cache \
-            -v ${{ github.workspace }}/.cargo/registry/index:/usr/local/cargo/registry/index \
+            --build-arg WORKSPACE_DIR=${{ github.workspace }} \
             -t hashtree-temp-${{ matrix.settings.architecture }}:${{ matrix.node-version }} \
             --progress=plain .
           docker create \
@@ -248,3 +246,14 @@ jobs:
   #     #   run: yarn publish --access public
   #     #   env:
   #     #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+
+docker buildx build \
+  --load \
+  --platform linux/arm64 \
+  --build-arg NODE_VERSION=20 \
+  --volume ~/.cargo-cache/git/db:/usr/local/cargo/git/db \
+  --volume ~/.cargo/registry/cache:/usr/local/cargo/cache \
+  --volume ~/.cargo/registry/index:/usr/local/cargo/registry/index \
+  -t hashtree-temp-linux-arm64:20 \
+  --progress=plain .
