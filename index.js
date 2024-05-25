@@ -35,7 +35,7 @@ switch (platform) {
         localFileExisted = existsSync(join(__dirname, 'hashtree.android-arm64.node'))
         try {
           if (localFileExisted) {
-            nativeBinding = require('./hashtree.android-arm64.node')
+            nativeBinding = require('./prebuild/hashtree.android-arm64.node')
           } else {
             nativeBinding = require('@chainsafe/hashtree-android-arm64')
           }
@@ -47,7 +47,7 @@ switch (platform) {
         localFileExisted = existsSync(join(__dirname, 'hashtree.android-arm-eabi.node'))
         try {
           if (localFileExisted) {
-            nativeBinding = require('./hashtree.android-arm-eabi.node')
+            nativeBinding = require('./prebuild/hashtree.android-arm-eabi.node')
           } else {
             nativeBinding = require('@chainsafe/hashtree-android-arm-eabi')
           }
@@ -67,7 +67,7 @@ switch (platform) {
         )
         try {
           if (localFileExisted) {
-            nativeBinding = require('./hashtree.win32-x64-msvc.node')
+            nativeBinding = require('./prebuild/hashtree.win32-x64-msvc.node')
           } else {
             nativeBinding = require('@chainsafe/hashtree-win32-x64-msvc')
           }
@@ -81,7 +81,7 @@ switch (platform) {
         )
         try {
           if (localFileExisted) {
-            nativeBinding = require('./hashtree.win32-ia32-msvc.node')
+            nativeBinding = require('./prebuild/hashtree.win32-ia32-msvc.node')
           } else {
             nativeBinding = require('@chainsafe/hashtree-win32-ia32-msvc')
           }
@@ -95,7 +95,7 @@ switch (platform) {
         )
         try {
           if (localFileExisted) {
-            nativeBinding = require('./hashtree.win32-arm64-msvc.node')
+            nativeBinding = require('./prebuild/hashtree.win32-arm64-msvc.node')
           } else {
             nativeBinding = require('@chainsafe/hashtree-win32-arm64-msvc')
           }
@@ -111,7 +111,7 @@ switch (platform) {
     localFileExisted = existsSync(join(__dirname, 'hashtree.darwin-universal.node'))
     try {
       if (localFileExisted) {
-        nativeBinding = require('./hashtree.darwin-universal.node')
+        nativeBinding = require('./prebuild/hashtree.darwin-universal.node')
       } else {
         nativeBinding = require('@chainsafe/hashtree-darwin-universal')
       }
@@ -122,7 +122,7 @@ switch (platform) {
         localFileExisted = existsSync(join(__dirname, 'hashtree.darwin-x64.node'))
         try {
           if (localFileExisted) {
-            nativeBinding = require('./hashtree.darwin-x64.node')
+            nativeBinding = require('./prebuild/hashtree.darwin-x64.node')
           } else {
             nativeBinding = require('@chainsafe/hashtree-darwin-x64')
           }
@@ -136,7 +136,7 @@ switch (platform) {
         )
         try {
           if (localFileExisted) {
-            nativeBinding = require('./hashtree.darwin-arm64.node')
+            nativeBinding = require('./prebuild/hashtree.darwin-arm64.node')
           } else {
             nativeBinding = require('@chainsafe/hashtree-darwin-arm64')
           }
@@ -155,7 +155,7 @@ switch (platform) {
     localFileExisted = existsSync(join(__dirname, 'hashtree.freebsd-x64.node'))
     try {
       if (localFileExisted) {
-        nativeBinding = require('./hashtree.freebsd-x64.node')
+        nativeBinding = require('./prebuild/hashtree.freebsd-x64.node')
       } else {
         nativeBinding = require('@chainsafe/hashtree-freebsd-x64')
       }
@@ -172,7 +172,7 @@ switch (platform) {
           )
           try {
             if (localFileExisted) {
-              nativeBinding = require('./hashtree.linux-x64-musl.node')
+              nativeBinding = require('./prebuild/hashtree.linux-x64-musl.node')
             } else {
               nativeBinding = require('@chainsafe/hashtree-linux-x64-musl')
             }
@@ -185,7 +185,7 @@ switch (platform) {
           )
           try {
             if (localFileExisted) {
-              nativeBinding = require('./hashtree.linux-x64-gnu.node')
+              nativeBinding = require('./prebuild/hashtree.linux-x64-gnu.node')
             } else {
               nativeBinding = require('@chainsafe/hashtree-linux-x64-gnu')
             }
@@ -201,7 +201,7 @@ switch (platform) {
           )
           try {
             if (localFileExisted) {
-              nativeBinding = require('./hashtree.linux-arm64-musl.node')
+              nativeBinding = require('./prebuild/hashtree.linux-arm64-musl.node')
             } else {
               nativeBinding = require('@chainsafe/hashtree-linux-arm64-musl')
             }
@@ -214,7 +214,7 @@ switch (platform) {
           )
           try {
             if (localFileExisted) {
-              nativeBinding = require('./hashtree.linux-arm64-gnu.node')
+              nativeBinding = require('./prebuild/hashtree.linux-arm64-gnu.node')
             } else {
               nativeBinding = require('@chainsafe/hashtree-linux-arm64-gnu')
             }
