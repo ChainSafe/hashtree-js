@@ -159,7 +159,7 @@ jobs:
       - name: Sanity Check with cargo
         shell: bash
         working-directory: hashtree
-        run: cargo build --verbose --release --manifest-path ./Cargo.toml
+        run: cargo build --verbose --release
       - name: Echo Artifacts
         working-directory: hashtree/build
         run: Get-ChildItem -Recurse
