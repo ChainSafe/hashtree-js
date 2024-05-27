@@ -158,7 +158,7 @@ jobs:
         run: make
       - name: Sanity Check with cargo
         shell: bash
-        working-directory: hashtree/src
+        working-directory: hashtree
         run: cargo build --verbose --release --manifest-path ./Cargo.toml
       - name: Echo Artifacts
         working-directory: hashtree/build
