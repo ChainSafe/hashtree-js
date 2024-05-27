@@ -12,7 +12,7 @@ COPY . /usr/src/hashtree-js
 
 WORKDIR /usr/src/hashtree-js/hashtree/src
 
-RUN CC=gcc make
+RUN make
 
 WORKDIR /usr/src/hashtree-js
 
