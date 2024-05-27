@@ -14,65 +14,64 @@ on:
       - master
 
 jobs:
-  # build-with-docker:
-  #   name: node@v${{ matrix.node-version }} on ${{ matrix.settings.name }} archtitecture
-  #   runs-on: ${{ matrix.settings.runner }}
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       node-version:
-  #         # - 18
-  #         # - 19
-  #         - 20
-  #         # - 21
-  #         # - 22
-  #       settings:
-  #         - name: Linux GNU arm64
-  #           runner: ubuntu-latest
-  #           architecture: arm64
-  #           target: aarch64-unknown-linux-gnu
-  #           docker_image: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian-aarch64
-  #           make_command: CC=gcc make
+  build-with-docker:
+    name: node@v${{ matrix.node-version }} on ${{ matrix.settings.name }} archtitecture
+    runs-on: ${{ matrix.settings.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version:
+          # - 18
+          # - 19
+          - 20
+          # - 21
+          # - 22
+        settings:
+          - name: Linux GNU arm64
+            runner: ubuntu-latest
+            architecture: arm64
+            target: aarch64-unknown-linux-gnu
+            docker_image: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian-aarch64
     
-  #   steps:
-  #     - name: Checkout Repo
-  #       uses: actions/checkout@v4
-  #       with:
-  #         submodules: recursive
-  #     # - name: Cache cargo
-  #     #   uses: actions/cache@v4
-  #     #   with:
-  #     #     path: |
-  #     #       ~/.cargo/registry/index/
-  #     #       ~/.cargo/registry/cache/
-  #     #       ~/.cargo/git/db/
-  #     #       .cargo-cache
-  #     #       target/
-  #     #     key: ${{ matrix.settings.host }}-cargo-${{ matrix.settings.target }}
-  #     - name: Set up QEMU
-  #       uses: docker/setup-qemu-action@v3
-  #       with:
-  #         platforms: ${{ matrix.settings.architecture }}
-  #     - name: Build Binding, Run Tests and Copy Build Artifact to Host
-  #       run: |
-  #         docker buildx build \
-  #           --load \
-  #           --platform linux/arm64 \
-  #           --build-arg NODE_VERSION=${{ matrix.node-version }} \
-  #           --build-arg WORKSPACE_DIR=${{ github.workspace }} \
-  #           -t hashtree-temp-${{ matrix.settings.architecture }}:${{ matrix.node-version }} \
-  #           --progress=plain .
-  #         docker create \
-  #           --name temp-container \
-  #           hashtree-temp-${{ matrix.settings.architecture }}:${{ matrix.node-version }}
-  #         docker cp temp-container:/usr/src/hashtree-js/prebuild ./prebuild
-  #     - name: Upload binding.node
-  #       if: github.repository_owner == 'chainsafe' && github.event_name != 'pull_request'
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: binding-${{ matrix.settings.architecture }}-${{ matrix.node-version }}
-  #         path: prebuild/*.node
-  #         if-no-files-found: error
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      # - name: Cache cargo
+      #   uses: actions/cache@v4
+      #   with:
+      #     path: |
+      #       ~/.cargo/registry/index/
+      #       ~/.cargo/registry/cache/
+      #       ~/.cargo/git/db/
+      #       .cargo-cache
+      #       target/
+      #     key: ${{ matrix.settings.host }}-cargo-${{ matrix.settings.target }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: ${{ matrix.settings.architecture }}
+      - name: Build Binding, Run Tests and Copy Build Artifact to Host
+        run: |
+          docker buildx build \
+            --load \
+            --platform linux/arm64 \
+            --build-arg NODE_VERSION=${{ matrix.node-version }} \
+            --build-arg WORKSPACE_DIR=${{ github.workspace }} \
+            -t hashtree-temp-${{ matrix.settings.architecture }}:${{ matrix.node-version }} \
+            --progress=plain .
+          docker create \
+            --name temp-container \
+            hashtree-temp-${{ matrix.settings.architecture }}:${{ matrix.node-version }}
+          docker cp temp-container:/usr/src/hashtree-js/prebuild ./prebuild
+      - name: Upload binding.node
+        if: github.repository_owner == 'chainsafe' && github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: binding-${{ matrix.settings.architecture }}-${{ matrix.node-version }}
+          path: prebuild/*.node
+          if-no-files-found: error
 
   build:
     name: node@v${{ matrix.node-version }} on ${{ matrix.settings.arch }} archtitecture
@@ -95,15 +94,15 @@ jobs:
           #   runner: macos-13
           #   target: x86_64-apple-darwin
           #   make_command: make
-          # - arch: Mac arm64
-          #   runner: macos-latest
-          #   target: aarch64-apple-darwin
-          #   make_command: make
+          - arch: Mac arm64
+            runner: macos-latest
+            target: aarch64-apple-darwin
+            make_command: make
 
-          # - arch: Linux GNU x86
-          #   runner: ubuntu-latest
-          #   target: x86_64-unknown-linux-gnu
-          #   make_command: make
+          - arch: Linux GNU x86
+            runner: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            make_command: make
 
           # Cross-compiling works but need to figure out musl env to run tests
           #
@@ -125,11 +124,11 @@ jobs:
           - arch: Windows x86
             runner: windows-latest
             target: x86_64-pc-windows-msvc
-            make_command: CC=gcc make
+            make_command: make
           - arch: Windows arm64
             runner: windows-latest
             target: aarch64-pc-windows-msvc
-            make_command: CC=gcc make
+            make_command: make
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
@@ -163,7 +162,7 @@ jobs:
       - name: Sanity Check
         shell: bash
         working-directory: hashtree/src
-        run: ${{ matrix.settings.make_command }}
+        run: make
       - name: Echo Artifacts
         working-directory: hashtree/build
         run: Get-ChildItem -Recurse
