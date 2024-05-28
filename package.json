@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "artifacts": "napi artifacts",
-    "clean": "rm -rf ./target ./hashtree/rust_bindings/target",
+    "clean": "rm -rf ./target ./hashtree/target",
     "build": "napi build --platform --release && cargo run --release --bin post-build",
     "build:debug": "napi build --platform",
     "prepublishOnly": "napi prepublish -t npm",
