@@ -152,14 +152,14 @@ jobs:
         run: yarn
       - uses: goto-bus-stop/setup-zig@v2
         if: ${{ matrix.settings.requires_zig }}
-      # - name: Sanity Check with make
-      #   shell: bash
-      #   working-directory: hashtree/src
-      #   run: make
-      # - name: Sanity Check with cargo
-      #   shell: bash
-      #   working-directory: hashtree
-      #   run: cargo build --verbose --release
+      - name: Sanity Check with make
+        shell: bash
+        working-directory: hashtree/src
+        run: make
+      - name: Sanity Check with cargo
+        shell: bash
+        working-directory: hashtree
+        run: cargo build --verbose --release
       # - name: Echo Artifacts
       #   working-directory: hashtree/build
       #   run: Get-ChildItem -Recurse
