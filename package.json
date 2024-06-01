@@ -8,16 +8,47 @@
   ],
   "scripts": {
     "artifacts": "napi artifacts",
-    "clean": "rm -rf ./target ./hashtree/target",
-    "build": "napi build --platform --release && cargo run --release --bin post-build",
+    "clean:rs": "rm -rf ./target ./hashtree/target",
+    "clean:ts": "rm -rf ./dist",
+    "clean": "npm run clean:rs && npm run clean:ts",
+    "build:ts:cjs": "tsc --project tsconfig.cjs.json",
+    "build:ts:esm": "tsc --project tsconfig.esm.json",
+    "build:ts": "npm run build:ts:cjs && npm run build:ts:esm",
+    "build:rs": "napi build --platform --release --dts lib/index.d.ts --js false",
+    "postbuild:rs": "cargo run --release --bin post-build",
+    "build": "npm run build:rs && npm run build:ts",
     "build:debug": "napi build --platform",
-    "prepublishOnly": "napi prepublish -t npm",
-    "test": "ava",
+    "prepublish": "ts-node scripts/prepareDist.ts",
+    "test": "jest",
     "universal": "napi universal",
     "version": "napi version"
   },
-  "main": "index.js",
-  "types": "index.d.ts",
+  "devDependencies": {
+    "@napi-rs/cli": "^2.18.0",
+    "@types/jest": "^29.1.2",
+    "@types/node": "^20.13.0",
+    "@typescript-eslint/eslint-plugin": "^6.14.0",
+    "@typescript-eslint/parser": "^6.14.0",
+    "eslint": "^8.55.0",
+    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-jest": "^28.5.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "jest": "^29.1.2",
+    "prettier": "^3.1.1",
+    "ts-jest": "^29.1.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.2.2"
+  },
+  "main": "./dist/cjs/lib/index.cjs",
+  "module": "./dist/esm/lib/index.mjs",
+  "types": "./dist/cjs/lib/index.d.cts",
+  "exports": {
+    "import": "./dist/esm/lib/index.mjs",
+    "require": "./dist/cjs/lib/index.cjs",
+    "default": "./dist/cjs/lib/index.cjs",
+    "types": "./dist/cjs/lib/index.d.cts"
+  },
   "napi": {
     "name": "hashtree",
     "triples": {
@@ -32,10 +63,6 @@
     }
   },
   "license": "MIT",
-  "devDependencies": {
-    "@napi-rs/cli": "^2.18.0",
-    "ava": "^6.0.1"
-  },
   "ava": {
     "timeout": "3m"
   },
