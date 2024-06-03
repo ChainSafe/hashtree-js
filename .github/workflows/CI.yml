@@ -1,9 +1,4 @@
 name: CI
-env:
-  DEBUG: napi:*
-  APP_NAME: hashtree
-  MACOSX_DEPLOYMENT_TARGET: '10.13'
-  INPUT_RUN: 1024
 permissions:
   contents: write
   id-token: write
@@ -15,76 +10,55 @@ on:
 
 jobs:
   build-with-docker:
-    name: node@v${{ matrix.node-version }} on ${{ matrix.settings.name }} archtitecture
+    name: ${{ matrix.settings.name }} archtitecture
     runs-on: ${{ matrix.settings.runner }}
     strategy:
       fail-fast: false
       matrix:
-        node-version:
-          # - 18
-          # - 19
-          - 20
-          # - 21
-          # - 22
         settings:
           - name: Linux GNU arm64
             runner: ubuntu-latest
             architecture: arm64
             target: aarch64-unknown-linux-gnu
             docker_image: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian-aarch64
-    
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
         with:
           submodules: recursive
-      # - name: Cache cargo
-      #   uses: actions/cache@v4
-      #   with:
-      #     path: |
-      #       ~/.cargo/registry/index/
-      #       ~/.cargo/registry/cache/
-      #       ~/.cargo/git/db/
-      #       .cargo-cache
-      #       target/
-      #     key: ${{ matrix.settings.host }}-cargo-${{ matrix.settings.target }}
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
         with:
           platforms: ${{ matrix.settings.architecture }}
+
       - name: Build Binding, Run Tests and Copy Build Artifact to Host
         run: |
           docker buildx build \
             --load \
             --platform linux/arm64 \
-            --build-arg NODE_VERSION=${{ matrix.node-version }} \
-            --build-arg WORKSPACE_DIR=${{ github.workspace }} \
-            -t hashtree-temp-${{ matrix.settings.architecture }}:${{ matrix.node-version }} \
+            --build-arg NODE_VERSION=20 \
+            -t hashtree-temp-${{ matrix.settings.architecture }} \
             --progress=plain .
           docker create \
             --name temp-container \
-            hashtree-temp-${{ matrix.settings.architecture }}:${{ matrix.node-version }}
+            hashtree-temp-${{ matrix.settings.architecture }}
           docker cp temp-container:/usr/src/hashtree-js/prebuild ./prebuild
+
       - name: Upload binding.node
         if: github.repository_owner == 'chainsafe' && github.event_name != 'pull_request'
         uses: actions/upload-artifact@v4
         with:
-          name: binding-${{ matrix.settings.architecture }}-${{ matrix.node-version }}
+          name: binding-${{ matrix.settings.architecture }}
           path: prebuild/*.node
           if-no-files-found: error
 
   build:
-    name: node@v${{ matrix.node-version }} on ${{ matrix.settings.arch }} archtitecture
+    name: ${{ matrix.settings.arch }} archtitecture
     runs-on: ${{ matrix.settings.runner }}
     strategy:
       fail-fast: false
       matrix:
-        node-version:
-          # - 18
-          # - 19
-          - 20
-          # - 21
-          # - 22
         settings:
           # https://napi.rs/docs/cli/artifacts
           # https://github.com/actions/runner-images
@@ -127,53 +101,38 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
+
       - name: Setup Rust Toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
           targets: ${{ matrix.settings.target }}
-      - name: Cache cargo
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            .cargo-cache
-            target/
-          key: ${{ matrix.settings.host }}-cargo-${{ matrix.settings.target }}
+
+      - uses: goto-bus-stop/setup-zig@v2
+        if: ${{ matrix.settings.requires_zig }}
+
       - name: Setup node
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: yarn
+
       - name: Install Dependencies
         shell: bash
         run: yarn
-      - uses: goto-bus-stop/setup-zig@v2
-        if: ${{ matrix.settings.requires_zig }}
-      - name: Sanity Check with make
-        shell: bash
-        working-directory: hashtree/src
-        run: make
-      - name: Sanity Check with cargo
-        shell: bash
-        working-directory: hashtree
-        run: cargo build --verbose --release
-      # - name: Echo Artifacts
-      #   working-directory: hashtree/build
-      #   run: Get-ChildItem -Recurse
-      #   shell: pwsh
+
       - name: Build
         shell: bash
-        run: yarn build --target ${{ matrix.settings.target }}
+        run: yarn build:rs --target ${{ matrix.settings.target }}
+
       - name: Test
         run: yarn test
+
       - name: Upload binding.node
         if: github.repository_owner == 'chainsafe' && github.event_name != 'pull_request'
         uses: actions/upload-artifact@v4
         with:
-          name: binding-${{ matrix.settings.architecture }}-${{ matrix.node-version }}
+          name: binding-${{ matrix.settings.architecture }}
           path: prebuild/*.node
           if-no-files-found: error
 

@@ -16,7 +16,6 @@
     "build:ts": "tsup",
     "build": "npm run build:rs && npm run build:ts",
     "build:debug": "napi build --platform",
-    "prepublish": "ts-node scripts/prepareDist.ts",
     "test": "jest",
     "universal": "napi universal",
     "version": "napi version"
