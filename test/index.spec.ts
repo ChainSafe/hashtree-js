@@ -1,5 +1,5 @@
 import {createHash} from "node:crypto";
-import {hash, hashInto} from "../lib/index.js";
+import {hash, hashInto} from "../index";
 
 type BufferLike = string | Uint8Array | Buffer;
 

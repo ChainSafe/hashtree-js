@@ -310,6 +310,7 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`)
 }
 
-const { sum } = nativeBinding
+const { hash, hashInto } = nativeBinding
 
-module.exports.sum = sum
+module.exports.hash = hash
+module.exports.hashInto = hashInto
