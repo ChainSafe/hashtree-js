@@ -1,0 +1,18 @@
+{
+  "name": "@chainsafe/hashtree-js-darwin-arm64",
+  "version": "0.0.0",
+  "os": [
+    "darwin"
+  ],
+  "cpu": [
+    "arm64"
+  ],
+  "main": "hashtree-js.darwin-arm64.node",
+  "files": [
+    "hashtree-js.darwin-arm64.node"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">= 10"
+  }
+}
