@@ -3,18 +3,13 @@
   "version": "0.0.0",
   "author": "ChainSafe.io",
   "contributors": [
-    "Cayman Navan <>",
+    "Cayman Navan <caymannava@gmail.com>",
     "Matthew Keil <me@matthewkeil.com>"
   ],
   "scripts": {
     "artifacts": "napi artifacts",
-    "clean:rs": "rm -rf ./target ./hashtree/target",
-    "clean:ts": "rm -rf ./dist",
-    "clean": "npm run clean:rs && npm run clean:ts",
-    "build:rs": "napi build --platform --release --dts lib/index.d.ts --js false",
-    "postbuild:rs": "cargo run --release --bin post-build",
-    "build:ts": "tsup",
-    "build": "npm run build:rs && npm run build:ts",
+    "clean": "rm -rf ./target ./hashtree/target",
+    "build": "napi build --platform --release",
     "build:debug": "napi build --platform",
     "test": "jest",
     "universal": "napi universal",
@@ -48,7 +43,7 @@
     "types": "./dist/cjs/lib/index.d.cts"
   },
   "napi": {
-    "name": "hashtree",
+    "name": "hashtree-js",
     "triples": {
       "additional": [
         "x86_64-apple-darwin",
