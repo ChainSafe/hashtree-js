@@ -12,6 +12,7 @@
     "clean": "rm -rf ./target ./hashtree/target",
     "build": "napi build --platform --release",
     "build:debug": "napi build --platform",
+    "prepublishOnly": "napi prepublish -t npm",
     "test": "jest",
     "universal": "napi universal",
     "version": "napi version"
