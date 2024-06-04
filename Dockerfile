@@ -16,4 +16,4 @@ RUN yarn config set supportedArchitectures.cpu "arm64" &&\
 
 RUN yarn build --target aarch64-unknown-linux-gnu
 
-RUN yarn test
+RUN yarn test --target aarch64-unknown-linux-gnu
