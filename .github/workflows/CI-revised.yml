@@ -43,7 +43,9 @@ jobs:
           docker create \
             --name temp-container \
             hashtree-temp-${{ matrix.settings.architecture }}
-          docker cp temp-container:/usr/src/hashtree-js/prebuild ./prebuild
+          for file in $(docker exec temp-container sh -c 'ls /usr/src/hashtree-js/*.node'); do
+            docker cp temp-container:"$file" .
+          done
 
       - name: Upload binding.node
         if: github.repository_owner == 'chainsafe' && github.event_name != 'pull_request'
@@ -90,9 +92,9 @@ jobs:
           # C lib builds but the rust wrapper does not link correctly. Working on PR
           # for prysmaticlabs/hashtree
           #
-          - arch: Windows x86
-            runner: windows-latest
-            target: x86_64-pc-windows-msvc
+          # - arch: Windows x86
+          #   runner: windows-latest
+          #   target: x86_64-pc-windows-msvc
           # - arch: Windows arm64
           #   runner: windows-latest
           #   target: aarch64-pc-windows-msvc
