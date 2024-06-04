@@ -50,7 +50,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: binding-${{ matrix.settings.architecture }}
-          path: prebuild/*.node
+          path: "*.node"
           if-no-files-found: error
 
   build:
@@ -121,6 +121,11 @@ jobs:
         shell: bash
         run: yarn
 
+      - name: Sanity Check
+        shell: bash
+        working-directory: hashtree
+        run: cargo build --release --target ${{ matrix.settings.target }}
+
       - name: Build
         shell: bash
         run: yarn build --target ${{ matrix.settings.target }}
@@ -133,7 +138,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: binding-${{ matrix.settings.architecture }}
-          path: prebuild/*.node
+          path: "*.node"
           if-no-files-found: error
 
   # publish:
