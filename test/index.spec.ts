@@ -3,6 +3,8 @@ import {hash, hashInto} from "../index";
 
 type BufferLike = string | Uint8Array | Buffer;
 
+const CHUNK_SIZE = 64;
+
 function toHexString(bytes: BufferLike): string {
   if (typeof bytes === "string") return bytes;
   if (bytes instanceof Buffer) return bytes.toString("hex");
@@ -21,12 +23,12 @@ function expectEqualHex(value: BufferLike, expected: BufferLike): void {
 }
 
 function nodeCryptoHash(input: Buffer): Uint8Array {
-  if (input.length % 64 !== 0) throw new Error("input must be a multiple of 64 bytes");
+  if (input.length % CHUNK_SIZE !== 0) throw new Error(`input must be a multiple of ${CHUNK_SIZE} bytes`);
 
   const output = new Uint8Array(input.length / 2);
 
-  for (let i = 0; i < input.length; i += 64) {
-    const chunk = input.slice(i, i + 64);
+  for (let i = 0; i < input.length; i += CHUNK_SIZE) {
+    const chunk = input.slice(i, i + CHUNK_SIZE);
     const hash = createHash("sha256").update(chunk).digest();
     output.set(hash, i / 2);
   }
@@ -35,39 +37,39 @@ function nodeCryptoHash(input: Buffer): Uint8Array {
 }
 
 function nodeCryptoHashInto(input: Buffer, output: Buffer): void {
-  if (input.length % 64 !== 0) throw new Error("input must be a multiple of 64 bytes");
+  if (input.length % CHUNK_SIZE !== 0) throw new Error(`input must be a multiple of ${CHUNK_SIZE} bytes`);
   if (output.length !== input.length / 2) throw new Error("output must be half the size of input");
 
-  for (let i = 0; i < input.length; i += 64) {
-    const chunk = input.slice(i, i + 64);
+  for (let i = 0; i < input.length; i += CHUNK_SIZE) {
+    const chunk = input.slice(i, i + CHUNK_SIZE);
     const hash = createHash("sha256").update(chunk).digest();
     output.set(hash, i / 2);
   }
 }
 
 describe("should hash similarly to crypto.createHash('sha256')", () => {
-  for (let i = 1; i < 16; i++) {
-    for (let j = 0; j < 255; j++) {
-      test(`i=${i}, j=${j}`, () => {
-        const input = Buffer.alloc(64 * i, j);
+  for (let i = 1; i <= 16; i++) {
+    test(`No of Chunks=${i}`, () => {
+      for (let j = 0; j < 255; j++) {
+        const input = Buffer.alloc(CHUNK_SIZE * i, j);
         expectEqualHex(hash(input), nodeCryptoHash(input));
-      });
-    }
+      }
+    });
   }
 });
 
 describe("should hashInto similarly to crypto.createHash('sha256')", () => {
-  for (let i = 1; i < 16; i++) {
-    for (let j = 0; j < 255; j++) {
-      test(`i=${i}, j=${j}`, () => {
-        const input = Buffer.alloc(64 * i, j);
-        const output1 = Buffer.alloc(32 * i);
-        const output2 = Buffer.alloc(32 * i);
+  for (let i = 1; i <= 16; i++) {
+    test(`No of Chunks=${i}`, () => {
+      for (let j = 0; j < 255; j++) {
+        const input = Buffer.alloc(CHUNK_SIZE * i, j);
+        const output1 = Buffer.alloc((CHUNK_SIZE / 2) * i);
+        const output2 = Buffer.alloc((CHUNK_SIZE / 2) * i);
 
         nodeCryptoHashInto(input, output2);
         hashInto(input, output1);
         expectEqualHex(output1, output2);
-      });
-    }
+      }
+    });
   }
 });
