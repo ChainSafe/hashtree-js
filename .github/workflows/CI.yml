@@ -20,13 +20,13 @@ jobs:
             runner: ubuntu-latest
             platform: linux/arm64
             target: aarch64-unknown-linux-gnu
-            filename: hashtree-js.linux-arm64-gnu.node
+            filename: hashtree.linux-arm64-gnu.node
           # Node does not support aarch64-linux-musl
           # - arch: Linux MUSL arm64
           #   runner: ubuntu-latest
           #   platform: linux/arm64
           #   target: aarch64-unknown-linux-musl
-          #   filename: hashtree-js.linux-arm64-musl.node
+          #   filename: hashtree.linux-arm64-musl.node
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4

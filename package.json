@@ -1,5 +1,5 @@
 {
-  "name": "@chainsafe/hashtree-js",
+  "name": "@chainsafe/hashtree",
   "version": "0.0.0",
   "author": "ChainSafe.io",
   "contributors": [
@@ -37,7 +37,7 @@
   "main": "index.js",
   "types": "index.d.ts",
   "napi": {
-    "name": "hashtree-js",
+    "name": "hashtree",
     "triples": {
       "additional": [
         "aarch64-apple-darwin",

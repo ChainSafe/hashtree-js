@@ -1,5 +1,5 @@
 {
-  "name": "@chainsafe/hashtree-js-linux-arm64-gnu",
+  "name": "@chainsafe/hashtree-linux-arm64-gnu",
   "version": "0.0.0",
   "os": [
     "linux"
@@ -7,9 +7,9 @@
   "cpu": [
     "arm64"
   ],
-  "main": "hashtree-js.linux-arm64-gnu.node",
+  "main": "hashtree.linux-arm64-gnu.node",
   "files": [
-    "hashtree-js.linux-arm64-gnu.node"
+    "hashtree.linux-arm64-gnu.node"
   ],
   "license": "MIT",
   "engines": {
