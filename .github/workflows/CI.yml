@@ -186,9 +186,6 @@ jobs:
       - name: Move Artifacts
         run: yarn artifacts
 
-      - name: Update NPM Package Versions
-        run: yarn update-versions
-
       - name: List packages
         run: ls -R ./npm
         shell: bash
