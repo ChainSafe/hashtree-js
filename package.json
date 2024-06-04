@@ -34,34 +34,21 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.2.2"
   },
-  "main": "./dist/cjs/lib/index.cjs",
-  "module": "./dist/esm/lib/index.mjs",
-  "types": "./dist/cjs/lib/index.d.cts",
-  "exports": {
-    "import": "./dist/esm/lib/index.mjs",
-    "require": "./dist/cjs/lib/index.cjs",
-    "default": "./dist/cjs/lib/index.cjs",
-    "types": "./dist/cjs/lib/index.d.cts"
-  },
+  "main": "index.js",
+  "types": "index.d.ts",
   "napi": {
     "name": "hashtree-js",
     "triples": {
       "additional": [
-        "x86_64-apple-darwin",
         "aarch64-apple-darwin",
         "x86_64-unknown-linux-gnu",
-        "aarch64-unknown-linux-gnu",
-        "x86_64-pc-windows-msvc",
-        "aarch64-pc-windows-msvc"
+        "aarch64-unknown-linux-gnu"
       ]
     }
   },
   "license": "MIT",
-  "ava": {
-    "timeout": "3m"
-  },
   "engines": {
-    "node": ">= 10"
+    "node": ">= 18"
   },
   "repository": {
     "type": "git",
