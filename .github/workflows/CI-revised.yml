@@ -21,22 +21,16 @@ jobs:
             platform: linux/arm64
             target: aarch64-unknown-linux-gnu
             filename: hashtree-js.linux-arm64-gnu.node
-            # docker_image: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian-aarch64
+          # Node does not support aarch64-linux-musl
+          # - arch: Linux MUSL arm64
+          #   runner: ubuntu-latest
+          #   target: aarch64-unknown-linux-musl
+          #   requires_zig: true
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
         with:
           submodules: recursive
-
-      # - name: Cache cargo
-      #   uses: actions/cache@v4
-      #   with:
-      #     path: |
-      #       ~/.cargo/registry/index/
-      #       ~/.cargo/registry/cache/
-      #       ~/.cargo/git/db/
-      #       .cargo-cache
-      #     key: ${{ matrix.settings.target }}-cargo-${{ matrix.settings.host }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -55,13 +49,6 @@ jobs:
             --name temp-container \
             hashtree-temp:${{ matrix.settings.target }}
           docker cp temp-container:/usr/src/hashtree-js/${{ matrix.settings.filename }} .
-
-      # - name: Build in docker
-      #   uses: addnab/docker-run-action@v3
-      #   with:
-      #     image: ${{ matrix.settings.docker_image }}
-      #     options: '--user 0:0 -v ${{ github.workspace }}/.cargo-cache/git/db:/usr/local/cargo/git/db -v ${{ github.workspace }}/.cargo/registry/cache:/usr/local/cargo/registry/cache -v ${{ github.workspace }}/.cargo/registry/index:/usr/local/cargo/registry/index -v ${{ github.workspace }}:/build -w /build'
-      #     run: yarn install && yarn build --target ${{ matrix.settings.target }} && yarn test --target ${{ matrix.settings.target }}
 
       - name: Upload binding.node
         if: github.repository_owner == 'chainsafe' && github.event_name != 'pull_request'
@@ -94,20 +81,12 @@ jobs:
             target: x86_64-unknown-linux-gnu
 
           # Cross-compiling works but need to figure out musl env to run tests
-          #
           # the index.js looks for musl env and selects correct binary
           # - arch: Linux MUSL x86
           #   runner: ubuntu-latest
           #   target: x86_64-unknown-linux-musl
-          # Node does not support aarch64-linux-musl
-          # - arch: Linux MUSL arm64
-          #   runner: ubuntu-latest
-          #   target: aarch64-unknown-linux-musl
-          #   requires_zig: true
 
-          # C lib builds but the rust wrapper does not link correctly. Working on PR
-          # for prysmaticlabs/hashtree
-          #
+          # TODO: (@matthewkeil) Error in windows linking but works fine in base repo. Need to debug
           # - arch: Windows x86
           #   runner: windows-latest
           #   target: x86_64-pc-windows-msvc
