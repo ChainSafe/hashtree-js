@@ -82,29 +82,11 @@ module.exports = {
     "import/core-modules": ["node:child_process", "node:crypto", "node:fs", "node:os", "node:path", "node:util"],
   },
   overrides: [
-    // {
-    //   files: ["lib/index.mjs"],
-    //   parserOptions: {
-    //     sourceType: "module"
-    //   },
-    //   rules: {
-    //     // The imports are all resolved via tsconfig.mjs.json but the root tsconfig that eslint uses
-    //     // shows them as unresolved.
-    //     "import/no-unresolved": "off",
-    //   },
-    // }, 
     {
       files: ["test/**/*.ts"],
       rules: {
         "import/no-extraneous-dependencies": "off",
         "@typescript-eslint/no-explicit-any": "off",
-      },
-    }, 
-    {
-      // Is a dev file and squacks about tsup being a devDependency
-      files: ["tsup.config.ts"],
-      rules: {
-        "import/no-extraneous-dependencies": "off"
       },
     },
   ],
