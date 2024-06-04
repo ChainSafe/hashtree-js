@@ -27,25 +27,42 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            .cargo-cache
+          key: ${{ matrix.settings.target }}-cargo-${{ matrix.settings.host }}
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
         with:
           platforms: ${{ matrix.settings.architecture }}
 
-      - name: Build Binding, Run Tests and Copy Build Artifact to Host
-        run: |
-          docker buildx build \
-            --load \
-            --platform linux/arm64 \
-            --build-arg NODE_VERSION=20 \
-            -t hashtree-temp-${{ matrix.settings.architecture }} \
-            --progress=plain .
-          docker create \
-            --name temp-container \
-            hashtree-temp-${{ matrix.settings.architecture }}
-          for file in $(docker exec temp-container sh -c 'ls /usr/src/hashtree-js/*.node'); do
-            docker cp temp-container:"$file" .
-          done
+      # - name: Build Binding, Run Tests and Copy Build Artifact to Host
+      #   run: |
+      #     docker buildx build \
+      #       --load \
+      #       --platform linux/arm64 \
+      #       --build-arg NODE_VERSION=20 \
+      #       -t hashtree-temp-${{ matrix.settings.target }} \
+      #       --progress=plain .
+      #     docker create \
+      #       --name temp-container \
+      #       hashtree-temp-${{ matrix.settings.target }}
+      #     for file in $(docker exec temp-container sh -c 'ls /usr/src/hashtree-js/*.node'); do
+      #       docker cp temp-container:"$file" .
+      #     done
+
+      - name: Build in docker
+        uses: addnab/docker-run-action@v3
+        with:
+          image: ${{ matrix.settings.docker_image }}
+          options: '--user 0:0 -v ${{ github.workspace }}/.cargo-cache/git/db:/usr/local/cargo/git/db -v ${{ github.workspace }}/.cargo/registry/cache:/usr/local/cargo/registry/cache -v ${{ github.workspace }}/.cargo/registry/index:/usr/local/cargo/registry/index -v ${{ github.workspace }}:/build -w /build'
+          run: yarn build --target ${{ matrix.settings.target }} && yarn test --target ${{ matrix.settings.target }}
 
       - name: Upload binding.node
         if: github.repository_owner == 'chainsafe' && github.event_name != 'pull_request'
