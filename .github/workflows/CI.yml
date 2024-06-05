@@ -89,9 +89,9 @@ jobs:
           #   target: x86_64-unknown-linux-musl
 
           # TODO: (@matthewkeil) Error in windows linking but works fine in base repo. Need to debug
-          # - arch: Windows x86
-          #   runner: windows-latest
-          #   target: x86_64-pc-windows-msvc
+          - arch: Windows x86
+            runner: windows-latest
+            target: x86_64-pc-windows-msvc
           # - arch: Windows arm64
           #   runner: windows-latest
           #   target: aarch64-pc-windows-msvc
@@ -123,7 +123,9 @@ jobs:
       - name: Sanity Check
         shell: bash
         working-directory: hashtree
-        run: cargo build --release --target ${{ matrix.settings.target }}
+        run: |
+          rustup target add ${{ matrix.settings.target }}
+          cargo build --release --target ${{ matrix.settings.target }}
 
       - name: Build
         shell: bash
