@@ -1,6 +1,6 @@
-ARG NODE_VERSION
+# ARG NODE_VERSION
 
-FROM matthewkeil/hashtree-debian-aarch64-env:${NODE_VERSION}
+FROM ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian-aarch64
 
 COPY . /usr/src/hashtree-js
 
