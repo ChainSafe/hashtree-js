@@ -121,7 +121,6 @@ jobs:
         run: yarn
 
       - name: Sanity Check
-        shell: bash
         working-directory: hashtree
         run: cargo build --release --target ${{ matrix.settings.target }}
 
