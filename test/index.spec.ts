@@ -1,3 +1,4 @@
+import util from "node:util";
 import {createHash} from "node:crypto";
 import {hash, hashInto, hashAsync} from "../index";
 
@@ -47,30 +48,34 @@ function nodeCryptoHashInto(input: Buffer, output: Buffer): void {
   }
 }
 
-describe("should hash similarly to crypto.createHash('sha256')", () => {
+it("should hash similarly to crypto.createHash('sha256')", () => {
   for (let i = 1; i <= 16; i++) {
-    test(`No of Chunks=${i}`, async () => {
-      for (let j = 0; j < 255; j++) {
-        const input = Buffer.alloc(CHUNK_SIZE * i, j);
-        expectEqualHex(hash(input), nodeCryptoHash(input));
-        expectEqualHex(hash(input), await hashAsync(input));
-      }
-    });
+    for (let j = 0; j < 255; j++) {
+      const input = Buffer.alloc(CHUNK_SIZE * i, j);
+      expectEqualHex(hash(input), nodeCryptoHash(input));
+    }
   }
 });
 
-describe("should hashInto similarly to crypto.createHash('sha256')", () => {
+it("should asyncHash similarly to crypto.createHash('sha256')", async () => {
   for (let i = 1; i <= 16; i++) {
-    test(`No of Chunks=${i}`, () => {
-      for (let j = 0; j < 255; j++) {
-        const input = Buffer.alloc(CHUNK_SIZE * i, j);
-        const output1 = Buffer.alloc((CHUNK_SIZE / 2) * i);
-        const output2 = Buffer.alloc((CHUNK_SIZE / 2) * i);
+    for (let j = 0; j < 255; j++) {
+      const input = Buffer.alloc(CHUNK_SIZE * i, j);
+      expectEqualHex(await hashAsync(input), nodeCryptoHash(input));
+    }
+  }
+});
 
-        nodeCryptoHashInto(input, output2);
-        hashInto(input, output1);
-        expectEqualHex(output1, output2);
-      }
-    });
+it("should hashInto similarly to crypto.createHash('sha256')", () => {
+  for (let i = 1; i <= 16; i++) {
+    for (let j = 0; j < 255; j++) {
+      const input = Buffer.alloc(CHUNK_SIZE * i, j);
+      const output1 = Buffer.alloc((CHUNK_SIZE / 2) * i);
+      const output2 = Buffer.alloc((CHUNK_SIZE / 2) * i);
+
+      nodeCryptoHashInto(input, output2);
+      hashInto(input, output1);
+      expectEqualHex(output1, output2);
+    }
   }
 });
