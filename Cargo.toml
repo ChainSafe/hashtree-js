@@ -1,19 +1,23 @@
 [package]
-edition = "2021"
 name = "chainsafe_hashtree"
 version = "0.0.0"
+edition = "2021"
 
 [lib]
 crate-type = ["cdylib"]
 
 [dependencies]
-# Default enable napi4 feature, see https://nodejs.org/api/n-api.html#node-api-version-matrix
-napi = { version = "2.12.2", default-features = false, features = ["napi4"] }
-napi-derive = "2.12.2"
+hashtree-rs = { path = "hashtree" }
+napi = { version = "2.16.6", default-features = true, features = [
+    # supports node v12.22.0+, v14.17.0+, v15.12.0+, 16.0.0 and all later versions
+    "napi8"
+] }
+napi-derive = { version = "2.16.5", default-features = true }
 
 [build-dependencies]
-napi-build = "2.0.1"
+napi-build = "2.1.3"
 
 [profile.release]
 lto = true
+codegen-units = 1
 strip = "symbols"
