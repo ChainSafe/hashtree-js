@@ -54,7 +54,7 @@ pub struct AsyncHash {
 impl Task for AsyncHash {
   type Output = Uint8Array;
   type JsValue = Uint8Array;
-  fn compute(&mut self) -> Result<Uint8Array, Error> {
+  fn compute(&mut self) -> Result<Self::Output, Error> {
     hash(self.input.clone())
   }
 
@@ -65,5 +65,8 @@ impl Task for AsyncHash {
 
 #[napi]
 pub fn hash_async(input: Uint8Array) -> AsyncTask<AsyncHash> {
+  INIT.call_once(|| {
+    init();
+  });
   AsyncTask::new(AsyncHash { input })
 }
