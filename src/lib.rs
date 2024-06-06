@@ -1,7 +1,7 @@
 #![deny(clippy::all)]
 
 use hashtree_rs::{hash as HASH, init};
-use napi::{bindgen_prelude::Uint8Array, Error};
+use napi::{bindgen_prelude::{AsyncTask, Uint8Array}, Env, Error, Task};
 use std::sync::Once;
 
 #[macro_use]
@@ -44,4 +44,26 @@ pub fn hash_into(input: Uint8Array, mut output: Uint8Array) -> Result<(), Error>
 
   HASH(output.as_mut(), input.as_ref(), output_len / 32);
   Ok(())
+}
+
+pub struct AsyncHash {
+  input: Uint8Array
+}
+
+#[napi]
+impl Task for AsyncHash {
+  type Output = Uint8Array;
+  type JsValue = Uint8Array;
+  fn compute(&mut self) -> Result<Uint8Array, Error> {
+    hash(self.input.clone())
+  }
+
+  fn resolve(&mut self, _env: Env, output: Self::Output) -> Result<Self::JsValue, Error> {
+    Ok(output)
+  }
+}
+
+#[napi]
+pub fn hash_async(input: Uint8Array) -> AsyncTask<AsyncHash> {
+  AsyncTask::new(AsyncHash { input })
 }

@@ -1,5 +1,5 @@
 import {createHash} from "node:crypto";
-import {hash, hashInto} from "../index";
+import {hash, hashInto, hashAsync} from "../index";
 
 type BufferLike = string | Uint8Array | Buffer;
 
@@ -49,10 +49,11 @@ function nodeCryptoHashInto(input: Buffer, output: Buffer): void {
 
 describe("should hash similarly to crypto.createHash('sha256')", () => {
   for (let i = 1; i <= 16; i++) {
-    test(`No of Chunks=${i}`, () => {
+    test(`No of Chunks=${i}`, async () => {
       for (let j = 0; j < 255; j++) {
         const input = Buffer.alloc(CHUNK_SIZE * i, j);
         expectEqualHex(hash(input), nodeCryptoHash(input));
+        expectEqualHex(hash(input), await hashAsync(input));
       }
     });
   }
