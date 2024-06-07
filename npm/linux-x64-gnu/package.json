@@ -6,9 +6,10 @@
     "Cayman Nava <caymannava@gmail.com>",
     "Matthew Keil <me@matthewkeil.com>"
   ],
+  "scripts": {},
   "repository": {
     "type": "git",
-    "url": "https://github.com/ChainSafe/hashtree-js.git"
+    "url": "git+https://github.com/ChainSafe/hashtree-js.git"
   },
   "bugs": {
     "url": "https://github.com/ChainSafe/hashtree-js/issues"
