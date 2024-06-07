@@ -8,6 +8,7 @@
   ],
   "scripts": {
     "artifacts": "napi artifacts",
+    "check-package-versions": "ts-node ./scripts/checkPackageVersions",
     "clean": "rm -rf ./target ./hashtree/target",
     "build": "napi build --platform --release",
     "build:debug": "napi build --platform",
