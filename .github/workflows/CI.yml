@@ -159,20 +159,20 @@ jobs:
           node-version: 20
           cache: yarn
 
-      - name: Create tag
-        id: tag
-        uses: butlerlogic/action-autotag@1.1.2
-        with:
-          strategy: package
-          tag_prefix: "v"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Create tag
+      #   id: tag
+      #   uses: butlerlogic/action-autotag@1.1.2
+      #   with:
+      #     strategy: package
+      #     tag_prefix: "v"
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Exit if no version change
-        if: steps.tag.outputs.tagcreated == 'no'
-        uses: actions/github-script@v3
-        with:
-          script: core.setFailed('The package.json version did not change. Workflow will not create a release.')    
+      # - name: Exit if no version change
+      #   if: steps.tag.outputs.tagcreated == 'no'
+      #   uses: actions/github-script@v3
+      #   with:
+      #     script: core.setFailed('The package.json version did not change. Workflow will not create a release.')    
 
       - name: Install dependencies
         run: yarn install
@@ -198,14 +198,5 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           npm config set provenance true
-          if git log -1 --pretty=%B | grep "^[0-9]\+\.[0-9]\+\.[0-9]\+$";
-          then
-            echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
-            npm publish --access public
-          elif git log -1 --pretty=%B | grep "^[0-9]\+\.[0-9]\+\.[0-9]\+";
-          then
-            echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
-            npm publish --tag next --access public
-          else
-            echo "Not a release, skipping publish"
-          fi
+          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+          npm publish --access public
