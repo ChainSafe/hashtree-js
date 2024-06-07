@@ -1,0 +1,32 @@
+{
+  "name": "@chainsafe/hashtree-darwin-arm64",
+  "version": "1.0.0",
+  "author": "ChainSafe.io",
+  "contributors": [
+    "Cayman Nava <caymannava@gmail.com>",
+    "Matthew Keil <me@matthewkeil.com>"
+  ],
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ChainSafe/hashtree-js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ChainSafe/hashtree-js/issues"
+  },
+  "homepage": "https://github.com/ChainSafe/hashtree-js#readme",
+  "os": [
+    "darwin"
+  ],
+  "cpu": [
+    "arm64"
+  ],
+  "main": "hashtree.darwin-arm64.node",
+  "files": [
+    "hashtree.darwin-arm64.node"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">= 10"
+  }
+}
