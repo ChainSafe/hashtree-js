@@ -53,5 +53,9 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/ChainSafe/hashtree-js.git"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/ChainSafe/hashtree-js/issues"
+  },
+  "homepage": "https://github.com/ChainSafe/hashtree-js#readme"
 }

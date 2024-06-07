@@ -1,6 +1,19 @@
 {
   "name": "@chainsafe/hashtree-linux-arm64-gnu",
   "version": "1.0.0",
+  "author": "ChainSafe.io",
+  "contributors": [
+    "Cayman Nava <caymannava@gmail.com>",
+    "Matthew Keil <me@matthewkeil.com>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ChainSafe/hashtree-js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ChainSafe/hashtree-js/issues"
+  },
+  "homepage": "https://github.com/ChainSafe/hashtree-js#readme",
   "os": [
     "linux"
   ],
