@@ -1,9 +1,9 @@
 {
   "name": "@chainsafe/hashtree",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "author": "ChainSafe.io",
   "contributors": [
-    "Cayman Navan <caymannavan@gmail.com>",
+    "Cayman Nava <caymannava@gmail.com>",
     "Matthew Keil <me@matthewkeil.com>"
   ],
   "scripts": {
