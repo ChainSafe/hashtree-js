@@ -5,3 +5,4 @@
 
 export function hash(input: Uint8Array): Uint8Array
 export function hashInto(input: Uint8Array, output: Uint8Array): void
+export function hashAsync(input: Uint8Array): Promise<Uint8Array>
