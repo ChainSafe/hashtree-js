@@ -310,7 +310,8 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`)
 }
 
-const { hash, hashInto } = nativeBinding
+const { hash, hashInto, hashAsync } = nativeBinding
 
 module.exports.hash = hash
 module.exports.hashInto = hashInto
+module.exports.hashAsync = hashAsync
