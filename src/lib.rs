@@ -3,7 +3,7 @@
 use hashtree_rs::{hash as HASH, init};
 use napi::{bindgen_prelude::Uint8Array, Error};
 use sha2::{Digest, Sha256};
-use std::sync::OnceLock;
+use std::{arch::is_aarch64_feature_detected, sync::OnceLock};
 
 #[macro_use]
 extern crate napi_derive;
