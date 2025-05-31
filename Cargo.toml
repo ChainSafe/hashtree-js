@@ -13,6 +13,7 @@ napi = { version = "2.16.6", default-features = true, features = [
     "napi8"
 ] }
 napi-derive = { version = "2.16.5", default-features = true }
+sha2 = "0.10.9"
 
 [build-dependencies]
 napi-build = "2.1.3"
