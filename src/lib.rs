@@ -18,8 +18,9 @@ fn has_cpu_features() -> bool {
     (is_x86_feature_detected!("sha") && is_x86_feature_detected!("avx"));
 
   #[cfg(target_arch = "aarch64")]
-  return is_aarch64_feature_detected!("sha2");
+  return true;
 
+  #[cfg(not(any(target_arch = "x86_64", target_arch = "aarch64")))]
   return false;
 }
 
