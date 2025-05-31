@@ -36,11 +36,6 @@ pub fn hash_into_portable(output: &mut [u8], input: &[u8], count: usize) {
   assert_eq!(output.len(), count * 32, "output slice is the wrong size");
   assert_eq!(input.len(),  count * 64, "input  slice is the wrong size");
 
-  // Fast path for nothing to do
-  if count == 0 {
-    return;
-  }
-
   for i in 0..count {
     // Select the i‑th 64‑byte message
     let msg = &input[i * 64 .. (i + 1) * 64];
