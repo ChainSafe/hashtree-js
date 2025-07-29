@@ -24,6 +24,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
       - run: corepack enable
       - name: Setup node
         uses: actions/setup-node@v4
@@ -69,6 +71,8 @@ jobs:
     runs-on: ${{ matrix.settings.host }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
       - run: corepack enable
       - name: Setup node
         uses: actions/setup-node@v4
@@ -142,6 +146,8 @@ jobs:
     runs-on: ${{ matrix.settings.host }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
       - run: corepack enable
       - name: Setup node
         uses: actions/setup-node@v4
@@ -178,6 +184,8 @@ jobs:
     runs-on: ${{ contains(matrix.target, 'aarch64') && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
       - run: corepack enable
       - name: Setup node
         uses: actions/setup-node@v4
@@ -242,6 +250,8 @@ jobs:
       - test-linux-binding
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
       - run: corepack enable
       - name: Setup node
         uses: actions/setup-node@v4
