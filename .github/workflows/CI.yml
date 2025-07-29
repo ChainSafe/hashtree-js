@@ -109,7 +109,10 @@ jobs:
         if: ${{ matrix.settings.setup }}
         shell: bash
       - name: Install dependencies
-        run: yarn install
+        run: |
+          corepack enable
+          yarn set version 4.9.2
+          yarn install
       - name: Build
         run: ${{ matrix.settings.build }}
         shell: bash
