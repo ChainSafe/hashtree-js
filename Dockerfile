@@ -1,6 +1,6 @@
 # ARG NODE_VERSION
 
-FROM ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian-aarch64
+FROM ghcr.io/napi-rs/napi-rs/nodejs-rust:stable-2023-09-17-aarch64
 
 COPY . /usr/src/hashtree-js
 
