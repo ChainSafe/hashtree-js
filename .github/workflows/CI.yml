@@ -55,9 +55,9 @@ jobs:
           - target: x86_64-pc-windows-msvc
             flags: --cross-compile
           - target: x86_64-unknown-linux-gnu
-            flags: --use-napi-cross
+            flags: --cross-compile
           - target: aarch64-unknown-linux-gnu
-            flags: --use-napi-cross
+            flags: --cross-compile
           - target: x86_64-unknown-linux-musl
             build: --cross-compile
     name: build - stable - ${{ matrix.settings.target }} - node@22
