@@ -1,20 +1,27 @@
 [target.x86_64-pc-windows-msvc]
 rustflags = ["-C", "target-feature=+crt-static"]
 
-# Use lld for the finallink on ARM GNU; optional but recommended
+# Linux (GNU) ARM64
 [target.aarch64-unknown-linux-gnu]
-rustflags = ["-C","link-arg=-fuse-ld=lld","-C","target-feature=-crt-static"]
-# Make the submodule build a PIC ARM64 *GNU* archive into Cargo's OUT_DIR
-env.MAKEFLAGS = 'CC=zig cc -target aarch64-linux-gnu AR="zig ar" CFLAGS="-fPIC" ARM=1 ARCH=aarch64'
+# make sure the submodule builds aarch64-gnu PIC objects
+env.CC = "zig cc -target aarch64-linux-gnu"
+env.AR = "zig ar"
+env.CFLAGS = "-fPIC"
 
-[target.x86_64-unknown-linux-gnu]
-env.MAKEFLAGS = 'CC=zig cc -target x86_64-linux-gnu AR="zig ar" CFLAGS="-fPIC" ARM=0 ARCH=x86_64'
-
-[target.x86_64-unknown-linux-musl]
-env.MAKEFLAGS = 'CC=zig cc -target x86_64-linux-musl AR="zig ar" CFLAGS="-fPIC" ARM=0 ARCH=x86_64'
-
+# macOS x86_64
 [target.x86_64-apple-darwin]
-env.MAKEFLAGS = 'CC=zig cc -target x86_64-macos AR="zig ar" CFLAGS="-fPIC -mmacosx-version-min=10.13" ARM=0 ARCH=x86_64'
+env.CC = "zig cc -target x86_64-macos"
+env.AR = "zig ar"
+env.CFLAGS = "-fPIC -mmacosx-version-min=10.13"
 
+# macOS arm64
 [target.aarch64-apple-darwin]
-env.MAKEFLAGS = 'CC=zig cc -target aarch64-macos AR="zig ar" CFLAGS="-fPIC -mmacosx-version-min=11.0" ARM=1 ARCH=aarch64'
+env.CC = "zig cc -target aarch64-macos"
+env.AR = "zig ar"
+env.CFLAGS = "-fPIC -mmacosx-version-min=11.0"
+
+# Linux x86_64 musl (if you build it)
+[target.x86_64-unknown-linux-musl]
+env.CC = "zig cc -target x86_64-linux-musl"
+env.AR = "zig ar"
+env.CFLAGS = "-fPIC"
