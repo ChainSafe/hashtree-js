@@ -23,14 +23,15 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: recursive
-      - run: corepack enable
+      - uses: actions/checkout@v5
+        with: 
+          submodules: 'recursive'      
       - name: Setup node
         uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Setup Core pack 
+        run: corepack enable
       - name: Install
         uses: dtolnay/rust-toolchain@stable
         with:
@@ -48,67 +49,104 @@ jobs:
       fail-fast: false
       matrix:
         settings:
-          - target: x86_64-apple-darwin
-            flags: --cross-compile
-          - target: aarch64-apple-darwin
-            flags: --cross-compile            
-          - target: x86_64-pc-windows-msvc
-            flags: --cross-compile
-          - target: x86_64-unknown-linux-gnu
-            flags: --cross-compile
-          - target: aarch64-unknown-linux-gnu
-            flags: --cross-compile
-          - target: x86_64-unknown-linux-musl
-            build: --cross-compile
-    name: build - stable - ${{ matrix.settings.target }} - node@22
-    runs-on: ubuntu-latest
+          # Mac
+          - host: macos-latest
+            target: aarch64-apple-darwin
+            build: yarn build --target aarch64-apple-darwin
+
+          # Windows
+          - host: windows-latest
+            build: yarn build --target x86_64-pc-windows-msvc
+            target: x86_64-pc-windows-msvc
+
+          # Linux
+          - host: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            build: yarn build --target x86_64-unknown-linux-gnu --use-napi-cross
+          - host: ubuntu-latest
+            target: x86_64-unknown-linux-musl
+            build: yarn build --target x86_64-unknown-linux-musl -x
+          - host: ubuntu-24.04-arm
+            target: aarch64-unknown-linux-gnu
+            build: yarn build --target aarch64-unknown-linux-gnu
+          - host: ubuntu-24.04-arm
+            target: aarch64-unknown-linux-musl
+            build: yarn build --target aarch64-unknown-linux-musl -x
+
+          # - host: windows-latest
+          #   build: yarn build --target i686-pc-windows-msvc
+          #   target: i686-pc-windows-msvc            
+          # - host: macos-latest
+          #   target: x86_64-apple-darwin
+          #   build: yarn build --target x86_64-apple-darwin
+          # - host: ubuntu-latest
+          #   target: armv7-unknown-linux-gnueabihf
+          #   build: yarn build --target armv7-unknown-linux-gnueabihf --use-napi-cross
+          # - host: ubuntu-latest
+          #   target: aarch64-linux-android
+          #   build: yarn build --target aarch64-linux-android
+          # - host: ubuntu-latest
+          #   target: armv7-linux-androideabi
+          #   build: yarn build --target armv7-linux-androideabi
+          # - host: windows-latest
+          #   target: aarch64-pc-windows-msvc
+          #   build: yarn build --target aarch64-pc-windows-msvc
+          # - host: ubuntu-latest
+          #   target: wasm32-wasip1-threads
+          #   build: yarn build --target wasm32-wasip1-threads
+    name: stable - ${{ matrix.settings.target }} - node@22
+    runs-on: ${{ matrix.settings.host }}
     steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: recursive
-      - run: corepack enable
+      - uses: actions/checkout@v5
+        with: 
+          submodules: 'recursive'      
       - name: Setup node
         uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Setup Core pack 
+        run: corepack enable          
       - name: Install
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
           targets: ${{ matrix.settings.target }}
-      # - name: Cache cargo
-      #   uses: actions/cache@v4
-      #   with:
-      #     path: |
-      #       ~/.cargo
-      #       ${{ github.workspace }}/.xwin
-      #       ~/.napi-rs
-      #       ./target
-      #     key: ${{ matrix.settings.target }}-cargo-cache
-      - name: Install ziglang
-        uses: mlugg/setup-zig@v2
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            ~/.napi-rs
+            .cargo-cache
+            target/
+          key: ${{ matrix.settings.target }}-cargo-${{ matrix.settings.host }}
+      - uses: mlugg/setup-zig@v2
+        if: ${{ contains(matrix.settings.target, 'musl') }}
         with:
           version: 0.14.1
-      - name: Install cargo toolchains
+      - name: Install cargo-zigbuild
         uses: taiki-e/install-action@v2
+        if: ${{ contains(matrix.settings.target, 'musl') }}
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
-          tool: cargo-zigbuild,cargo-xwin
+          tool: cargo-zigbuild
+      - name: Setup toolchain
+        run: ${{ matrix.settings.setup }}
+        if: ${{ matrix.settings.setup }}
+        shell: bash
       - name: Install dependencies
-        run: |
-          corepack enable
-          yarn set version 4.9.2
-          yarn install
+        run: yarn install
       - name: Build
-        run: yarn build --target ${{ matrix.settings.target }} ${{ matrix.settings.flags }}
+        run: ${{ matrix.settings.build }}
         shell: bash
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: bindings-${{ matrix.settings.target }}
-          path: |
-            *.node
+          path: "*.node"
           if-no-files-found: error
   test-macOS-windows-binding:
     name: Test bindings on ${{ matrix.settings.target }} - node@${{ matrix.node }}
@@ -124,30 +162,32 @@ jobs:
           - host: macos-latest
             target: aarch64-apple-darwin
             architecture: arm64
-          - host: macos-latest
-            target: x86_64-apple-darwin
-            architecture: x64
+
+          # - host: macos-latest
+          #   target: x86_64-apple-darwin
+          #   architecture: x64
+          # - host: windows-11-arm
+          #   target: aarch64-pc-windows-msvc
+          #   architecture: arm64
         node:
           - '20'
           - '22'
     runs-on: ${{ matrix.settings.host }}
     steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: recursive
-      - run: corepack enable
+      - uses: actions/checkout@v5
+        with: 
+          submodules: 'recursive'
       - name: Setup node
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
           architecture: ${{ matrix.settings.architecture }}
+      - name: Setup Core pack 
+        run: corepack enable          
       - name: Install dependencies
-        run: |
-          corepack enable
-          yarn set version 4.9.2
-          yarn install
+        run: yarn install
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: bindings-${{ matrix.settings.target }}
           path: .
@@ -165,21 +205,23 @@ jobs:
       matrix:
         target:
           - x86_64-unknown-linux-gnu
-          - aarch64-unknown-linux-gnu
           - x86_64-unknown-linux-musl
+          - aarch64-unknown-linux-gnu
+          - aarch64-unknown-linux-musl
         node:
           - '20'
           - '22'
     runs-on: ${{ contains(matrix.target, 'aarch64') && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: recursive
-      - run: corepack enable
+      - uses: actions/checkout@v5
+        with: 
+          submodules: 'recursive'      
       - name: Setup node
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
+      - name: Setup Core pack 
+        run: corepack enable          
       - name: Output docker params
         id: docker
         run: |
@@ -205,7 +247,7 @@ jobs:
           yarn config set --json supportedArchitectures.libc '["current", "musl", "gnu"]'
           yarn install
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: bindings-${{ matrix.target }}
           path: .
@@ -223,11 +265,10 @@ jobs:
         uses: addnab/docker-run-action@v3
         with:
           image: ${{ steps.docker.outputs.IMAGE }}
-          options: '-v ${{ github.workspace }}:${{ github.workspace }} -w ${{ github.workspace }} --platform ${{ steps.docker.outputs.PLATFORM }}'
-          run: yarn test
+          options: -v ${{ github.workspace }}:${{ github.workspace }} -w ${{ github.workspace }} --platform ${{ steps.docker.outputs.PLATFORM }}
+          run: corepack enable && yarn test
   publish:
     name: Publish
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -237,51 +278,26 @@ jobs:
       - test-macOS-windows-binding
       - test-linux-binding
     steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: recursive
-      - run: corepack enable
+      - uses: actions/checkout@v5
+        with: 
+          submodules: 'recursive'      
       - name: Setup node
         uses: actions/setup-node@v4
         with:
           node-version: 22
-
-      - name: Create tag
-        id: tag
-        uses: butlerlogic/action-autotag@1.1.2
-        with:
-          strategy: package
-          tag_prefix: "v"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Exit if no version change
-        if: steps.tag.outputs.tagcreated == 'no'
-        uses: actions/github-script@v3
-        with:
-          script: core.setFailed('The package.json version did not change. Workflow will not create a release.')    
-
       - name: Install dependencies
         run: yarn install
-
       - name: create npm dirs
         run: yarn napi create-npm-dirs
-
       - name: Download all artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           path: artifacts
-
-      - name: Check Bindings Module Versions Match
-        run: yarn check-package-versions
-
       - name: Move artifacts
         run: yarn artifacts
-
       - name: List packages
         run: ls -R ./npm
         shell: bash
-
       - name: Publish
         run: |
           npm config set provenance true
