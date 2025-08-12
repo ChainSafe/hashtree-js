@@ -2,201 +2,307 @@ name: CI
 permissions:
   contents: write
   id-token: write
+env:
+  DEBUG: napi:*
+  APP_NAME: hashtree-js
+  MACOSX_DEPLOYMENT_TARGET: '10.13'
+  CARGO_INCREMENTAL: '1'
 on:
   pull_request:
   push:
     branches:
       - main
-
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
-  build-with-docker:
-    name: ${{ matrix.settings.name }} archtitecture
-    runs-on: ${{ matrix.settings.runner }}
-    strategy:
-      fail-fast: false
-      matrix:
-        settings:
-          - name: Linux GNU arm64
-            runner: ubuntu-latest
-            platform: linux/arm64
-            target: aarch64-unknown-linux-gnu
-            filename: hashtree.linux-arm64-gnu.node
-          # Node does not support aarch64-linux-musl
-          # - arch: Linux MUSL arm64
-          #   runner: ubuntu-latest
-          #   platform: linux/arm64
-          #   target: aarch64-unknown-linux-musl
-          #   filename: hashtree.linux-arm64-musl.node
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+        with: 
+          submodules: 'recursive'      
+      - name: Setup node
+        uses: actions/setup-node@v4
         with:
-          submodules: recursive
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+          node-version: 22
+      - name: Setup Core pack 
+        run: corepack enable
+      - name: Install
+        uses: dtolnay/rust-toolchain@stable
         with:
-          platforms: ${{ matrix.settings.platform }}
-
-      - name: Build Binding, Run Tests and Copy Build Artifact to Host
-        run: |
-          docker buildx build \
-            --load \
-            --platform ${{ matrix.settings.platform }} \
-            --build-arg NODE_VERSION=20 \
-            -t hashtree-temp:${{ matrix.settings.target }} \
-            --progress=plain .
-          docker create \
-            --name temp-container \
-            hashtree-temp:${{ matrix.settings.target }}
-          docker cp temp-container:/usr/src/hashtree-js/${{ matrix.settings.filename }} .
-
-      - name: Upload binding.node
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: actions/upload-artifact@v4
-        with:
-          name: binding-${{ matrix.settings.target }}
-          path: "*.node"
-          if-no-files-found: error
-          retention-days: 1
-
+          components: clippy, rustfmt
+      - name: Install dependencies
+        run: yarn install
+      - name: Oxlint
+        run: yarn lint
+      - name: Cargo fmt
+        run: cargo fmt -- --check
+      - name: Clippy
+        run: cargo clippy
   build:
-    name: ${{ matrix.settings.arch }} archtitecture
-    runs-on: ${{ matrix.settings.runner }}
     strategy:
       fail-fast: false
       matrix:
         settings:
-          # https://napi.rs/docs/cli/artifacts
-          # https://github.com/actions/runner-images
-
-          # OSX x86 is not supported by the assembly yet.  @potuz is aware
-          # - arch: Mac x86
-          #   runner: macos-13
-          #   target: x86_64-apple-darwin
-          - arch: Mac arm64
-            runner: macos-latest
+          # Mac
+          - host: macos-latest
             target: aarch64-apple-darwin
+            build: yarn build --target aarch64-apple-darwin
 
-          - arch: Linux GNU x86
-            runner: ubuntu-latest
+          # Windows
+          - host: windows-latest
+            build: yarn build --target x86_64-pc-windows-msvc
+            target: x86_64-pc-windows-msvc
+
+          # Linux
+          - host: ubuntu-latest
             target: x86_64-unknown-linux-gnu
+            build: yarn build --target x86_64-unknown-linux-gnu --use-napi-cross
+          - host: ubuntu-latest
+            target: x86_64-unknown-linux-musl
+            build: yarn build --target x86_64-unknown-linux-musl -x
+          - host: ubuntu-24.04-arm
+            target: aarch64-unknown-linux-gnu
+            build: yarn build --target aarch64-unknown-linux-gnu
+          - host: ubuntu-24.04-arm
+            target: aarch64-unknown-linux-musl
+            build: yarn build --target aarch64-unknown-linux-musl -x
 
-          # Cross-compiling works but need to figure out musl env to run tests
-          # the index.js looks for musl env and selects correct binary
-          # - arch: Linux MUSL x86
-          #   runner: ubuntu-latest
-          #   target: x86_64-unknown-linux-musl
-
-          # TODO: (@matthewkeil) Error in windows linking but works fine in base repo. Need to debug
-          # - arch: Windows x86
-          #   runner: windows-latest
-          #   target: x86_64-pc-windows-msvc
-          # - arch: Windows arm64
-          #   runner: windows-latest
+          # - host: windows-latest
+          #   build: yarn build --target i686-pc-windows-msvc
+          #   target: i686-pc-windows-msvc            
+          # - host: macos-latest
+          #   target: x86_64-apple-darwin
+          #   build: yarn build --target x86_64-apple-darwin
+          # - host: ubuntu-latest
+          #   target: armv7-unknown-linux-gnueabihf
+          #   build: yarn build --target armv7-unknown-linux-gnueabihf --use-napi-cross
+          # - host: ubuntu-latest
+          #   target: aarch64-linux-android
+          #   build: yarn build --target aarch64-linux-android
+          # - host: ubuntu-latest
+          #   target: armv7-linux-androideabi
+          #   build: yarn build --target armv7-linux-androideabi
+          # - host: windows-latest
           #   target: aarch64-pc-windows-msvc
+          #   build: yarn build --target aarch64-pc-windows-msvc
+          # - host: ubuntu-latest
+          #   target: wasm32-wasip1-threads
+          #   build: yarn build --target wasm32-wasip1-threads
+    name: stable - ${{ matrix.settings.target }} - node@22
+    runs-on: ${{ matrix.settings.host }}
     steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+        with: 
+          submodules: 'recursive'      
+      - name: Setup node
+        uses: actions/setup-node@v4
         with:
-          submodules: recursive
-
-      - name: Setup Rust Toolchain
+          node-version: 22
+      - name: Setup Core pack 
+        run: corepack enable          
+      - name: Install
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
           targets: ${{ matrix.settings.target }}
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            ~/.napi-rs
+            .cargo-cache
+            target/
+          key: ${{ matrix.settings.target }}-cargo-${{ matrix.settings.host }}
+      - uses: mlugg/setup-zig@v2
+        if: ${{ contains(matrix.settings.target, 'musl') }}
+        with:
+          version: 0.14.1
+      - name: Install cargo-zigbuild
+        uses: taiki-e/install-action@v2
+        if: ${{ contains(matrix.settings.target, 'musl') }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          tool: cargo-zigbuild
+      - name: Setup toolchain
+        run: ${{ matrix.settings.setup }}
+        if: ${{ matrix.settings.setup }}
+        shell: bash
+      - name: Install dependencies
+        run: yarn install
+      - name: Build
+        run: ${{ matrix.settings.build }}
+        shell: bash
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bindings-${{ matrix.settings.target }}
+          path: "*.node"
+          if-no-files-found: error
+  test-macOS-windows-binding:
+    name: Test bindings on ${{ matrix.settings.target }} - node@${{ matrix.node }}
+    needs:
+      - build
+    strategy:
+      fail-fast: false
+      matrix:
+        settings:
+          - host: windows-latest
+            target: x86_64-pc-windows-msvc
+            architecture: x64
+          - host: macos-latest
+            target: aarch64-apple-darwin
+            architecture: arm64
 
-      - uses: goto-bus-stop/setup-zig@v2
-        if: ${{ matrix.settings.requires_zig }}
-
+          # - host: macos-latest
+          #   target: x86_64-apple-darwin
+          #   architecture: x64
+          # - host: windows-11-arm
+          #   target: aarch64-pc-windows-msvc
+          #   architecture: arm64
+        node:
+          - '20'
+          - '22'
+    runs-on: ${{ matrix.settings.host }}
+    steps:
+      - uses: actions/checkout@v5
+        with: 
+          submodules: 'recursive'
       - name: Setup node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: yarn
-
-      - name: Install Dependencies
-        shell: bash
-        run: yarn
-
-      - name: Sanity Check
-        working-directory: hashtree
-        run: cargo build --release --target ${{ matrix.settings.target }}
-
-      - name: Build
-        shell: bash
-        run: yarn build --target ${{ matrix.settings.target }}
-
-      - name: Test
-        run: yarn test
-
-      - name: Upload binding.node
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: actions/upload-artifact@v4
+          node-version: ${{ matrix.node }}
+          architecture: ${{ matrix.settings.architecture }}
+      - name: Setup Core pack 
+        run: corepack enable          
+      - name: Install dependencies
+        run: yarn install
+      - name: Download artifacts
+        uses: actions/download-artifact@v5
         with:
-          name: binding-${{ matrix.settings.target }}
-          path: "*.node"
-          if-no-files-found: error
-          retention-days: 1
-
+          name: bindings-${{ matrix.settings.target }}
+          path: .
+      - name: List packages
+        run: ls -R .
+        shell: bash
+      - name: Test bindings
+        run: yarn test
+  test-linux-binding:
+    name: Test ${{ matrix.target }} - node@${{ matrix.node }}
+    needs:
+      - build
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - x86_64-unknown-linux-gnu
+          - x86_64-unknown-linux-musl
+          - aarch64-unknown-linux-gnu
+          - aarch64-unknown-linux-musl
+        node:
+          - '20'
+          - '22'
+    runs-on: ${{ contains(matrix.target, 'aarch64') && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
+    steps:
+      - uses: actions/checkout@v5
+        with: 
+          submodules: 'recursive'      
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Setup Core pack 
+        run: corepack enable          
+      - name: Output docker params
+        id: docker
+        run: |
+          node -e "
+            if ('${{ matrix.target }}'.startsWith('aarch64')) {
+              console.log('PLATFORM=linux/arm64')
+            } else if ('${{ matrix.target }}'.startsWith('armv7')) {
+              console.log('PLATFORM=linux/arm/v7')
+            } else {
+              console.log('PLATFORM=linux/amd64')
+            }
+          " >> $GITHUB_OUTPUT
+          node -e "
+            if ('${{ matrix.target }}'.endsWith('-musl')) {
+              console.log('IMAGE=node:${{ matrix.node }}-alpine')
+            } else {
+              console.log('IMAGE=node:${{ matrix.node }}-slim')
+            }
+          " >> $GITHUB_OUTPUT
+      - name: Install dependencies
+        run: |
+          yarn config set --json supportedArchitectures.cpu '["current", "arm64", "x64", "arm"]'
+          yarn config set --json supportedArchitectures.libc '["current", "musl", "gnu"]'
+          yarn install
+      - name: Download artifacts
+        uses: actions/download-artifact@v5
+        with:
+          name: bindings-${{ matrix.target }}
+          path: .
+      - name: List packages
+        run: ls -R .
+        shell: bash
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        if: ${{ contains(matrix.target, 'armv7') }}
+        with:
+          platforms: all
+      - run: docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+        if: ${{ contains(matrix.target, 'armv7') }}
+      - name: Test bindings
+        uses: addnab/docker-run-action@v3
+        with:
+          image: ${{ steps.docker.outputs.IMAGE }}
+          options: -v ${{ github.workspace }}:${{ github.workspace }} -w ${{ github.workspace }} --platform ${{ steps.docker.outputs.PLATFORM }}
+          run: corepack enable && yarn test
   publish:
     name: Publish
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
     needs:
-      - build
-      - build-with-docker
-
+      - lint
+      - test-macOS-windows-binding
+      - test-linux-binding
     steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: recursive
-
+      - uses: actions/checkout@v5
+        with: 
+          submodules: 'recursive'      
       - name: Setup node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: yarn
-
-      - name: Create tag
-        id: tag
-        uses: butlerlogic/action-autotag@1.1.2
-        with:
-          strategy: package
-          tag_prefix: "v"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Exit if no version change
-        if: steps.tag.outputs.tagcreated == 'no'
-        uses: actions/github-script@v3
-        with:
-          script: core.setFailed('The package.json version did not change. Workflow will not create a release.')    
-
+          node-version: 22
+      - name: Setup Core pack 
+        run: corepack enable
       - name: Install dependencies
         run: yarn install
-
-      - name: Check Bindings Module Versions Match
-        run: yarn check-package-versions
-          
+      - name: create npm dirs
+        run: yarn napi create-npm-dirs
       - name: Download all artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           path: artifacts
-
-      - name: Move Artifacts
+      - name: Move artifacts
         run: yarn artifacts
-
       - name: List packages
         run: ls -R ./npm
         shell: bash
-
       - name: Publish
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           npm config set provenance true
           echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
           npm publish --access public
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

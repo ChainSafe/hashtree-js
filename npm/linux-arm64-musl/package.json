@@ -1,12 +1,12 @@
 {
-  "name": "@chainsafe/hashtree-linux-x64-gnu",
+  "name": "@chainsafe/hashtree-linux-arm64-musl",
   "version": "1.0.1",
   "cpu": [
-    "x64"
+    "arm64"
   ],
-  "main": "hashtree.linux-x64-gnu.node",
+  "main": "hashtree.linux-arm64-musl.node",
   "files": [
-    "hashtree.linux-x64-gnu.node"
+    "hashtree.linux-arm64-musl.node"
   ],
   "keywords": [
     "hash",
@@ -33,6 +33,6 @@
     "linux"
   ],
   "libc": [
-    "glibc"
+    "musl"
   ]
 }

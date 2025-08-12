@@ -1,12 +1,12 @@
 {
-  "name": "@chainsafe/hashtree-linux-x64-gnu",
+  "name": "@chainsafe/hashtree-win32-x64-msvc",
   "version": "1.0.1",
   "cpu": [
     "x64"
   ],
-  "main": "hashtree.linux-x64-gnu.node",
+  "main": "hashtree.win32-x64-msvc.node",
   "files": [
-    "hashtree.linux-x64-gnu.node"
+    "hashtree.win32-x64-msvc.node"
   ],
   "keywords": [
     "hash",
@@ -30,9 +30,6 @@
     "url": "https://github.com/ChainSafe/hashtree-js/issues"
   },
   "os": [
-    "linux"
-  ],
-  "libc": [
-    "glibc"
+    "win32"
   ]
 }

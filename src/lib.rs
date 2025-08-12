@@ -42,6 +42,6 @@ pub fn hash_into(input: Uint8Array, mut output: Uint8Array) -> Result<(), Error>
     return Err(Error::from_reason("Output length must be half input"));
   }
 
-  HASH(output.as_mut(), input.as_ref(), output_len / 32);
+  HASH(unsafe { output.as_mut() }, input.as_ref(), output_len / 32);
   Ok(())
 }
