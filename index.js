@@ -78,7 +78,12 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        return require('@napi-rs/hashtree-android-arm64')
+        const binding = require('@chainsafe/hashtree-android-arm64')
+        const bindingPackageVersion = require('@chainsafe/hashtree-android-arm64/package.json').version
+        if (bindingPackageVersion !== '1.0.1' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 1.0.1 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        }
+        return binding
       } catch (e) {
         loadErrors.push(e)
       }
@@ -89,7 +94,12 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        return require('@napi-rs/hashtree-android-arm-eabi')
+        const binding = require('@chainsafe/hashtree-android-arm-eabi')
+        const bindingPackageVersion = require('@chainsafe/hashtree-android-arm-eabi/package.json').version
+        if (bindingPackageVersion !== '1.0.1' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 1.0.1 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        }
+        return binding
       } catch (e) {
         loadErrors.push(e)
       }
@@ -104,7 +114,12 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        return require('@napi-rs/hashtree-win32-x64-msvc')
+        const binding = require('@chainsafe/hashtree-win32-x64-msvc')
+        const bindingPackageVersion = require('@chainsafe/hashtree-win32-x64-msvc/package.json').version
+        if (bindingPackageVersion !== '1.0.1' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 1.0.1 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        }
+        return binding
       } catch (e) {
         loadErrors.push(e)
       }
@@ -115,7 +130,12 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        return require('@napi-rs/hashtree-win32-ia32-msvc')
+        const binding = require('@chainsafe/hashtree-win32-ia32-msvc')
+        const bindingPackageVersion = require('@chainsafe/hashtree-win32-ia32-msvc/package.json').version
+        if (bindingPackageVersion !== '1.0.1' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 1.0.1 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        }
+        return binding
       } catch (e) {
         loadErrors.push(e)
       }
@@ -126,7 +146,12 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        return require('@napi-rs/hashtree-win32-arm64-msvc')
+        const binding = require('@chainsafe/hashtree-win32-arm64-msvc')
+        const bindingPackageVersion = require('@chainsafe/hashtree-win32-arm64-msvc/package.json').version
+        if (bindingPackageVersion !== '1.0.1' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 1.0.1 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        }
+        return binding
       } catch (e) {
         loadErrors.push(e)
       }
@@ -140,7 +165,12 @@ function requireNative() {
       loadErrors.push(e)
     }
     try {
-      return require('@napi-rs/hashtree-darwin-universal')
+      const binding = require('@chainsafe/hashtree-darwin-universal')
+      const bindingPackageVersion = require('@chainsafe/hashtree-darwin-universal/package.json').version
+      if (bindingPackageVersion !== '1.0.1' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+        throw new Error(`Native binding package version mismatch, expected 1.0.1 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+      }
+      return binding
     } catch (e) {
       loadErrors.push(e)
     }
@@ -151,7 +181,12 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        return require('@napi-rs/hashtree-darwin-x64')
+        const binding = require('@chainsafe/hashtree-darwin-x64')
+        const bindingPackageVersion = require('@chainsafe/hashtree-darwin-x64/package.json').version
+        if (bindingPackageVersion !== '1.0.1' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 1.0.1 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        }
+        return binding
       } catch (e) {
         loadErrors.push(e)
       }
@@ -162,7 +197,12 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        return require('@napi-rs/hashtree-darwin-arm64')
+        const binding = require('@chainsafe/hashtree-darwin-arm64')
+        const bindingPackageVersion = require('@chainsafe/hashtree-darwin-arm64/package.json').version
+        if (bindingPackageVersion !== '1.0.1' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 1.0.1 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        }
+        return binding
       } catch (e) {
         loadErrors.push(e)
       }
@@ -177,7 +217,12 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        return require('@napi-rs/hashtree-freebsd-x64')
+        const binding = require('@chainsafe/hashtree-freebsd-x64')
+        const bindingPackageVersion = require('@chainsafe/hashtree-freebsd-x64/package.json').version
+        if (bindingPackageVersion !== '1.0.1' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 1.0.1 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        }
+        return binding
       } catch (e) {
         loadErrors.push(e)
       }
@@ -188,7 +233,12 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        return require('@napi-rs/hashtree-freebsd-arm64')
+        const binding = require('@chainsafe/hashtree-freebsd-arm64')
+        const bindingPackageVersion = require('@chainsafe/hashtree-freebsd-arm64/package.json').version
+        if (bindingPackageVersion !== '1.0.1' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 1.0.1 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        }
+        return binding
       } catch (e) {
         loadErrors.push(e)
       }
@@ -204,7 +254,12 @@ function requireNative() {
           loadErrors.push(e)
         }
         try {
-          return require('@napi-rs/hashtree-linux-x64-musl')
+          const binding = require('@chainsafe/hashtree-linux-x64-musl')
+          const bindingPackageVersion = require('@chainsafe/hashtree-linux-x64-musl/package.json').version
+          if (bindingPackageVersion !== '1.0.1' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+            throw new Error(`Native binding package version mismatch, expected 1.0.1 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+          }
+          return binding
         } catch (e) {
           loadErrors.push(e)
         }
@@ -215,7 +270,12 @@ function requireNative() {
           loadErrors.push(e)
         }
         try {
-          return require('@napi-rs/hashtree-linux-x64-gnu')
+          const binding = require('@chainsafe/hashtree-linux-x64-gnu')
+          const bindingPackageVersion = require('@chainsafe/hashtree-linux-x64-gnu/package.json').version
+          if (bindingPackageVersion !== '1.0.1' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+            throw new Error(`Native binding package version mismatch, expected 1.0.1 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+          }
+          return binding
         } catch (e) {
           loadErrors.push(e)
         }
@@ -228,7 +288,12 @@ function requireNative() {
           loadErrors.push(e)
         }
         try {
-          return require('@napi-rs/hashtree-linux-arm64-musl')
+          const binding = require('@chainsafe/hashtree-linux-arm64-musl')
+          const bindingPackageVersion = require('@chainsafe/hashtree-linux-arm64-musl/package.json').version
+          if (bindingPackageVersion !== '1.0.1' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+            throw new Error(`Native binding package version mismatch, expected 1.0.1 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+          }
+          return binding
         } catch (e) {
           loadErrors.push(e)
         }
@@ -239,7 +304,12 @@ function requireNative() {
           loadErrors.push(e)
         }
         try {
-          return require('@napi-rs/hashtree-linux-arm64-gnu')
+          const binding = require('@chainsafe/hashtree-linux-arm64-gnu')
+          const bindingPackageVersion = require('@chainsafe/hashtree-linux-arm64-gnu/package.json').version
+          if (bindingPackageVersion !== '1.0.1' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+            throw new Error(`Native binding package version mismatch, expected 1.0.1 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+          }
+          return binding
         } catch (e) {
           loadErrors.push(e)
         }
@@ -252,7 +322,12 @@ function requireNative() {
           loadErrors.push(e)
         }
         try {
-          return require('@napi-rs/hashtree-linux-arm-musleabihf')
+          const binding = require('@chainsafe/hashtree-linux-arm-musleabihf')
+          const bindingPackageVersion = require('@chainsafe/hashtree-linux-arm-musleabihf/package.json').version
+          if (bindingPackageVersion !== '1.0.1' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+            throw new Error(`Native binding package version mismatch, expected 1.0.1 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+          }
+          return binding
         } catch (e) {
           loadErrors.push(e)
         }
@@ -263,7 +338,12 @@ function requireNative() {
           loadErrors.push(e)
         }
         try {
-          return require('@napi-rs/hashtree-linux-arm-gnueabihf')
+          const binding = require('@chainsafe/hashtree-linux-arm-gnueabihf')
+          const bindingPackageVersion = require('@chainsafe/hashtree-linux-arm-gnueabihf/package.json').version
+          if (bindingPackageVersion !== '1.0.1' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+            throw new Error(`Native binding package version mismatch, expected 1.0.1 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+          }
+          return binding
         } catch (e) {
           loadErrors.push(e)
         }
@@ -276,7 +356,12 @@ function requireNative() {
           loadErrors.push(e)
         }
         try {
-          return require('@napi-rs/hashtree-linux-riscv64-musl')
+          const binding = require('@chainsafe/hashtree-linux-riscv64-musl')
+          const bindingPackageVersion = require('@chainsafe/hashtree-linux-riscv64-musl/package.json').version
+          if (bindingPackageVersion !== '1.0.1' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+            throw new Error(`Native binding package version mismatch, expected 1.0.1 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+          }
+          return binding
         } catch (e) {
           loadErrors.push(e)
         }
@@ -287,7 +372,12 @@ function requireNative() {
           loadErrors.push(e)
         }
         try {
-          return require('@napi-rs/hashtree-linux-riscv64-gnu')
+          const binding = require('@chainsafe/hashtree-linux-riscv64-gnu')
+          const bindingPackageVersion = require('@chainsafe/hashtree-linux-riscv64-gnu/package.json').version
+          if (bindingPackageVersion !== '1.0.1' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+            throw new Error(`Native binding package version mismatch, expected 1.0.1 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+          }
+          return binding
         } catch (e) {
           loadErrors.push(e)
         }
@@ -299,7 +389,12 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        return require('@napi-rs/hashtree-linux-ppc64-gnu')
+        const binding = require('@chainsafe/hashtree-linux-ppc64-gnu')
+        const bindingPackageVersion = require('@chainsafe/hashtree-linux-ppc64-gnu/package.json').version
+        if (bindingPackageVersion !== '1.0.1' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 1.0.1 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        }
+        return binding
       } catch (e) {
         loadErrors.push(e)
       }
@@ -310,7 +405,12 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        return require('@napi-rs/hashtree-linux-s390x-gnu')
+        const binding = require('@chainsafe/hashtree-linux-s390x-gnu')
+        const bindingPackageVersion = require('@chainsafe/hashtree-linux-s390x-gnu/package.json').version
+        if (bindingPackageVersion !== '1.0.1' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 1.0.1 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        }
+        return binding
       } catch (e) {
         loadErrors.push(e)
       }
@@ -320,34 +420,49 @@ function requireNative() {
   } else if (process.platform === 'openharmony') {
     if (process.arch === 'arm64') {
       try {
-        return require('./hashtree.linux-arm64-ohos.node')
+        return require('./hashtree.openharmony-arm64.node')
       } catch (e) {
         loadErrors.push(e)
       }
       try {
-        return require('@napi-rs/hashtree-linux-arm64-ohos')
+        const binding = require('@chainsafe/hashtree-openharmony-arm64')
+        const bindingPackageVersion = require('@chainsafe/hashtree-openharmony-arm64/package.json').version
+        if (bindingPackageVersion !== '1.0.1' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 1.0.1 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        }
+        return binding
       } catch (e) {
         loadErrors.push(e)
       }
     } else if (process.arch === 'x64') {
       try {
-        return require('./hashtree.linux-x64-ohos.node')
+        return require('./hashtree.openharmony-x64.node')
       } catch (e) {
         loadErrors.push(e)
       }
       try {
-        return require('@napi-rs/hashtree-linux-x64-ohos')
+        const binding = require('@chainsafe/hashtree-openharmony-x64')
+        const bindingPackageVersion = require('@chainsafe/hashtree-openharmony-x64/package.json').version
+        if (bindingPackageVersion !== '1.0.1' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 1.0.1 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        }
+        return binding
       } catch (e) {
         loadErrors.push(e)
       }
     } else if (process.arch === 'arm') {
       try {
-        return require('./hashtree.linux-arm-ohos.node')
+        return require('./hashtree.openharmony-arm.node')
       } catch (e) {
         loadErrors.push(e)
       }
       try {
-        return require('@napi-rs/hashtree-linux-arm-ohos')
+        const binding = require('@chainsafe/hashtree-openharmony-arm')
+        const bindingPackageVersion = require('@chainsafe/hashtree-openharmony-arm/package.json').version
+        if (bindingPackageVersion !== '1.0.1' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 1.0.1 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        }
+        return binding
       } catch (e) {
         loadErrors.push(e)
       }
@@ -371,7 +486,7 @@ if (!nativeBinding || process.env.NAPI_RS_FORCE_WASI) {
   }
   if (!nativeBinding) {
     try {
-      nativeBinding = require('@napi-rs/hashtree-wasm32-wasi')
+      nativeBinding = require('@chainsafe/hashtree-wasm32-wasi')
     } catch (err) {
       if (process.env.NAPI_RS_FORCE_WASI) {
         loadErrors.push(err)
@@ -382,18 +497,16 @@ if (!nativeBinding || process.env.NAPI_RS_FORCE_WASI) {
 
 if (!nativeBinding) {
   if (loadErrors.length > 0) {
-    const musl = process.platform === 'linux' ? isMusl() : false;
-    // Log actual errors to debug console
-    throw loadErrors[0];
-    // throw new Error(
-    //   `Cannot find native binding for platform=${process.platform}, arch=${process.arch}, musl=${musl} \n` +
-    //     `npm has a bug related to optional dependencies (https://github.com/npm/cli/issues/4828). ` +
-    //     'Please try `npm i` again after removing both package-lock.json and node_modules directory.',
-    //   { cause: loadErrors }
-    // )
+    throw new Error(
+      `Cannot find native binding. ` +
+        `npm has a bug related to optional dependencies (https://github.com/npm/cli/issues/4828). ` +
+        'Please try `npm i` again after removing both package-lock.json and node_modules directory.',
+      { cause: loadErrors }
+    )
   }
   throw new Error(`Failed to load native binding`)
 }
 
 module.exports = nativeBinding
-module.exports.plus100 = nativeBinding.plus100
+module.exports.hash = nativeBinding.hash
+module.exports.hashInto = nativeBinding.hashInto
