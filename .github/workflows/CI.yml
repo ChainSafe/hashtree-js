@@ -285,6 +285,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Setup Core pack 
+        run: corepack enable
       - name: Install dependencies
         run: yarn install
       - name: create npm dirs
