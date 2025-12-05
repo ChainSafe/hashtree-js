@@ -94,7 +94,7 @@ jobs:
           # - host: ubuntu-latest
           #   target: wasm32-wasip1-threads
           #   build: pnpm build --target wasm32-wasip1-threads
-    name: stable - ${{ matrix.settings.target }} - node@22
+    name: Build - ${{ matrix.settings.target }} - node@22
     runs-on: ${{ matrix.settings.host }}
     steps:
       - uses: actions/checkout@v5
