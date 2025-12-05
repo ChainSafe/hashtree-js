@@ -1,7 +1,9 @@
 name: CI
 permissions:
-  contents: write
-  id-token: write
+  contents: write # Required for OIDC
+  id-token: write # Required to create a Github release
+  pull-requests: write # Required to add tags to pull requests
+
 env:
   DEBUG: napi:*
   APP_NAME: hashtree-js
@@ -26,7 +28,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: 22
       - name: Setup Core pack 
         run: corepack enable
       - name: Install
@@ -91,7 +93,7 @@ jobs:
           # - host: ubuntu-latest
           #   target: wasm32-wasip1-threads
           #   build: yarn build --target wasm32-wasip1-threads
-    name: stable - ${{ matrix.settings.target }} - node@24
+    name: stable - ${{ matrix.settings.target }} - node@22
     runs-on: ${{ matrix.settings.host }}
     steps:
       - uses: actions/checkout@v5
@@ -100,7 +102,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: 22
       - name: Setup Core pack 
         run: corepack enable          
       - name: Install
@@ -167,8 +169,8 @@ jobs:
           #   target: aarch64-pc-windows-msvc
           #   architecture: arm64
         node:
+          - '20'
           - '22'
-          - '24'
     runs-on: ${{ matrix.settings.host }}
     steps:
       - uses: actions/checkout@v5
@@ -206,8 +208,8 @@ jobs:
           - aarch64-unknown-linux-gnu
           - aarch64-unknown-linux-musl
         node:
+          - '20'
           - '22'
-          - '24'
     runs-on: ${{ contains(matrix.target, 'aarch64') && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     steps:
       - uses: actions/checkout@v5
@@ -282,7 +284,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: 22
       - name: Upgrade npm for OIDC
         run: npm i -g npm@^11.5.1
       - name: Setup Core pack 
