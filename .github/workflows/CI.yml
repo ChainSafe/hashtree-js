@@ -68,7 +68,7 @@ jobs:
             build: pnpm build --target x86_64-unknown-linux-musl -x
           - host: ubuntu-24.04-arm
             target: aarch64-unknown-linux-gnu
-            build: pnpm build --target aarch64-unknown-linux-gnu --use-napi-cross
+            build: pnpm build --target aarch64-unknown-linux-gnu -x
           - host: ubuntu-24.04-arm
             target: aarch64-unknown-linux-musl
             build: pnpm build --target aarch64-unknown-linux-musl -x
@@ -122,12 +122,12 @@ jobs:
             target/
           key: ${{ matrix.settings.target }}-cargo-${{ matrix.settings.host }}
       - uses: mlugg/setup-zig@v2
-        if: ${{ contains(matrix.settings.target, 'musl') }}
+        if: ${{ contains(matrix.settings.target, 'musl') || contains(matrix.settings.target, 'aarch64') }}
         with:
           version: 0.15.2
       - name: Install cargo-zigbuild
         uses: taiki-e/install-action@v2
-        if: ${{ contains(matrix.settings.target, 'musl') }}
+        if: ${{ contains(matrix.settings.target, 'musl') || contains(matrix.settings.target, 'aarch64') }}
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
@@ -153,7 +153,7 @@ jobs:
         if: matrix.settings.target != 'wasm32-wasip1-threads'
         with:
           name: bindings-${{ matrix.settings.target }}
-          path: '*.node'
+          path: '/*.node'
           if-no-files-found: error
       - name: Upload artifact
         uses: actions/upload-artifact@v5
