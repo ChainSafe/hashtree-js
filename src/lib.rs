@@ -16,7 +16,7 @@ pub fn hash(input: Uint8Array) -> Result<Uint8Array, Error> {
   });
 
   let input_len = input.len();
-  if (input_len % 64) != 0 {
+  if !input_len.is_multiple_of(64) {
     return Err(Error::from_reason("Input must be a multiple of 64 bytes"));
   }
   let output_len = input_len / 2;
@@ -32,7 +32,7 @@ pub fn hash_into(input: Uint8Array, mut output: Uint8Array) -> Result<(), Error>
   });
 
   let input_len = input.len();
-  if (input_len % 64) != 0 {
+  if !input_len.is_multiple_of(64) {
     return Err(Error::from_reason(
       "Input length must be a multiple of 64 bytes",
     ));
